@@ -1,0 +1,4 @@
+gitdb
+GitPython
+pyfakefs
+smmap
