@@ -15,6 +15,8 @@ from prompt_generator import (
     generate_folder_structure
 )
 
+CASEFOLD = False
+
 # --- Helper Debug Function ---
 def debug_patterns(scanner, test_paths, is_dir=False):
     print("DEBUG: Loaded patterns:")
@@ -202,7 +204,7 @@ class PromptGenerationTests(unittest.TestCase):
         }
         self.create_structure(structure)
         self.set_gitignore("# no ignores")
-        tree = generate_folder_structure(self.repo_path)
+        tree = generate_folder_structure(self.repo_path, CASEFOLD)
         self.assertIn("src/", tree)
         self.assertIn("├── main.py", tree)
         self.assertIn("README.md", tree)
@@ -216,7 +218,7 @@ class PromptGenerationTests(unittest.TestCase):
         }
         self.create_structure(structure)
         self.set_gitignore("")
-        prompt = generate_prompt(self.repo_path)
+        prompt = generate_prompt(self.repo_path, CASEFOLD)
         self.assertIn("Project Structure:", prompt)
         self.assertIn("src/", prompt)
         self.assertIn('print("Hello World")', prompt)
@@ -236,7 +238,7 @@ class PromptGenerationTests(unittest.TestCase):
         }
         self.create_structure(structure)
         self.set_gitignore("*.log\ntemp.tmp\n")
-        prompt = generate_prompt(self.repo_path)
+        prompt = generate_prompt(self.repo_path, CASEFOLD)
         self.assertNotIn("debug.log", prompt)
         self.assertNotIn("info.log", prompt)
         self.assertNotIn("temp.tmp", prompt)
@@ -343,7 +345,7 @@ class GranularBehaviorTests(unittest.TestCase):
             git_ignored = self.run_git_check_ignore(f)
             print(f"Git check-ignore for {f}: {git_ignored}")
             self.assertTrue(git_ignored, f"Git should ignore {f}")
-        prompt = generate_prompt(self.repo_path)
+        prompt = generate_prompt(self.repo_path, CASEFOLD)
         print("Generated Prompt:\n", prompt)
         self.assertNotIn("temp.tmp", prompt, "Prompt should not include temp.tmp")
         self.assertNotIn("debug.log", prompt, "Prompt should not include debug.log")
@@ -558,7 +560,7 @@ class ExtraEdgeCasesTests(unittest.TestCase):
         self.create_structure(structure)
         # Ignore files ending with .me, temp.tmp, and hidden files.
         self.set_gitignore("*.me\ntemp.tmp\n.*\n")
-        prompt = generate_prompt(self.repo_path)
+        prompt = generate_prompt(self.repo_path, CASEFOLD)
         self.assertNotIn("ignore.me", prompt, "Prompt should not include ignore.me")
         self.assertNotIn("temp.tmp", prompt, "Prompt should not include temp.tmp")
         self.assertNotIn(".hidden", prompt, "Prompt should not include .hidden")

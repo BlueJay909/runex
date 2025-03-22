@@ -4,12 +4,13 @@ Wildmatch implementation
 
 This module provides a simplified recursive translation of Git's C wildmatch
 logic for shell-style wildcard matching. It supports wildcards such as '*', '?'
-and bracket expressions (e.g. [abc]). In addition, it now supports POSIX bracket
+and bracket expressions (e.g. [abc]). In addition, it supports POSIX bracket
 expressions (e.g. [[:alpha:]]) by expanding them into equivalent character sets.
 
-All patterns—whether containing a leading slash or not—are processed here.
-Flags such as WM_CASEFOLD (for case-insensitive matching), WM_PATHNAME (preventing
-'*' from matching '/'), and WM_UNICODE (to enable Unicode expansions) modify the behavior.
+Flags:
+  WM_CASEFOLD enables case-insensitive matching,
+  WM_PATHNAME prevents '*' from matching '/',
+  WM_UNICODE enables Unicode expansions for POSIX bracket expressions.
 
 Leading slashes are handled so that patterns starting with "/" are anchored to the root.
 """
@@ -31,7 +32,7 @@ WM_UNICODE = 4              # When set, use Unicode expansions for POSIX bracket
 # Each key maps to a tuple: (ASCII expansion, Unicode expansion)
 POSIX_MAPPING = {
     'alnum':  ('a-zA-Z0-9', r'\w'),
-    'alpha':  ('a-zA-Z',    None),
+    'alpha':  ('a-zA-Z',    None),  # No built-in shorthand; could be enhanced later.
     'ascii':  (r'\x00-\x7F', r'\x00-\x7F'),
     'blank':  (r' \t',      r'[ \t]'),
     'cntrl':  (r'\x00-\x1F\x7F', None),
@@ -56,13 +57,12 @@ def expand_posix_classes(content: str, flags: int) -> str:
     
     Args:
         content: The raw content inside the bracket expression (without '[' and ']').
-        flags: The matching flags; WM_UNICODE determines which expansion to use.
+        flags: The matching flags.
         
     Returns:
         The content string with all POSIX bracket expressions replaced.
     """
     pattern = re.compile(r'\[:([a-z]+):\]')
-    
     def repl(match):
         cls = match.group(1)
         ascii_eq, unicode_eq = POSIX_MAPPING.get(cls, ('', ''))
@@ -79,13 +79,14 @@ def dowild(pattern: str, text: str, flags: int) -> int:
     Args:
         pattern: The wildcard pattern (supports *, ?, and bracket expressions,
                  including POSIX bracket expressions like [[:alpha:]]).
-        text: The text (usually a filename or path) to match against.
+        text: The text (usually a filename or path) to match.
         flags: Bitwise flags modifying matching behavior (WM_CASEFOLD, WM_PATHNAME, WM_UNICODE).
 
     Returns:
         WM_MATCH (1) if text matches the pattern, WM_NOMATCH (0) if not,
         or one of the abort signals.
     """
+    # Preserve leading slash behavior.
     if pattern.startswith("/"):
         if not text.startswith("/"):
             return WM_NOMATCH
@@ -95,16 +96,13 @@ def dowild(pattern: str, text: str, flags: int) -> int:
     p = 0
     while p < len(pattern):
         p_ch = pattern[p] if p < len(pattern) else ''
-        
         if not text and p_ch != '*':
             return WM_ABORT_ALL
-
         if flags & WM_CASEFOLD:
             p_ch = p_ch.lower()
             t_ch = text[0].lower() if text else ''
         else:
             t_ch = text[0] if text else ''
-
         if p_ch == '\\':
             p += 1
             if p >= len(pattern):
@@ -115,7 +113,6 @@ def dowild(pattern: str, text: str, flags: int) -> int:
             text = text[1:]
             p += 1
             continue
-
         elif p_ch == '?':
             if (flags & WM_PATHNAME) and text[0] == '/':
                 return WM_NOMATCH
@@ -124,7 +121,6 @@ def dowild(pattern: str, text: str, flags: int) -> int:
             text = text[1:]
             p += 1
             continue
-
         elif p_ch == '*':
             while p < len(pattern) and pattern[p] == '*':
                 p += 1
@@ -143,8 +139,8 @@ def dowild(pattern: str, text: str, flags: int) -> int:
                     return WM_ABORT_TO_STARSTAR
                 text = text[1:]
             return WM_ABORT_ALL
-
         elif p_ch == '[':
+            # Handle a bracket expression with potential nested POSIX classes.
             p += 1  # Skip '['.
             if p >= len(pattern):
                 return WM_ABORT_ALL
@@ -153,8 +149,22 @@ def dowild(pattern: str, text: str, flags: int) -> int:
                 negated = True
                 p += 1
             start = p
-            while p < len(pattern) and pattern[p] != ']':
-                p += 1
+            # Instead of simply scanning until the first ']', we must handle nested
+            # POSIX classes of the form "[:...:]". We'll scan until we find the closing bracket
+            # that is not part of a "[:...:]" sequence.
+            while p < len(pattern):
+                if pattern[p:p+2] == "[:":
+                    # Skip over the POSIX class.
+                    idx = pattern.find(":]", p+2)
+                    if idx == -1:
+                        p = len(pattern)
+                    else:
+                        p = idx + 2
+                    continue
+                elif pattern[p] == ']':
+                    break
+                else:
+                    p += 1
             if p >= len(pattern):
                 return WM_ABORT_ALL
             bracket_content = pattern[start:p]
@@ -164,7 +174,8 @@ def dowild(pattern: str, text: str, flags: int) -> int:
                 return WM_NOMATCH
             t_ch = text[0]
             try:
-                class_regex = re.compile(f"^[{expanded}]$")
+                re_flags = re.IGNORECASE if (flags & WM_CASEFOLD) else 0
+                class_regex = re.compile(f"^[{expanded}]$", re_flags)
             except re.error:
                 return WM_ABORT_ALL
             matched = bool(class_regex.match(t_ch))
@@ -172,27 +183,14 @@ def dowild(pattern: str, text: str, flags: int) -> int:
                 return WM_NOMATCH
             text = text[1:]
             continue
-
         else:
             if not text or text[0] != p_ch:
                 return WM_NOMATCH
             text = text[1:]
             p += 1
             continue
-
     return WM_MATCH if not text else WM_NOMATCH
 
 def wildmatch(pattern: str, text: str, flags: int = 0) -> int:
-    """
-    Wrapper function for dowild.
-    
-    Args:
-        pattern: The wildcard pattern.
-        text: The text to test.
-        flags: Optional flags (WM_CASEFOLD, WM_PATHNAME, WM_UNICODE).
-    
-    Returns:
-        WM_MATCH if text matches the pattern, otherwise WM_NOMATCH.
-    """
     res = dowild(pattern, text, flags)
     return WM_MATCH if res == WM_MATCH else WM_NOMATCH
