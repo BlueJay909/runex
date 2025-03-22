@@ -86,7 +86,6 @@ def dowild(pattern: str, text: str, flags: int) -> int:
         WM_MATCH (1) if text matches the pattern, WM_NOMATCH (0) if not,
         or one of the abort signals.
     """
-    # Preserve leading slash behavior: if pattern starts with '/', then text must too.
     if pattern.startswith("/"):
         if not text.startswith("/"):
             return WM_NOMATCH
