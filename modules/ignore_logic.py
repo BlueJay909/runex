@@ -4,8 +4,8 @@ Implements .gitignore like logic
 
 This module defines classes to represent .gitignore patterns and to scan a
 directory tree for files/directories that should be ignored based on these rules.
-All wildcard matching for basename-only patterns falls back to wildmatch(),
-while slash-containing patterns are compiled into regexes.
+For patterns with a slash, a regex is compiled; for basename-only patterns,
+wildmatch() is used.
 """
 
 import os           # For file system operations.
@@ -20,12 +20,10 @@ logging.basicConfig(level=logging.WARNING)
 class GitIgnorePattern:
     """
     Represents a single .gitignore pattern.
-
-    The pattern is processed to determine:
-      - Negation (if it starts with '!')
-      - Directory-only rules (if it ends with '/')
-      - A corresponding regex for matching paths (for patterns with a slash).
-    For basename-only patterns (without a slash), wildmatch() is used.
+    
+    Processes the pattern for negation and directory-only rules.
+    For patterns with a slash, compiles a regex (with proper anchors);
+    for basename-only patterns, wildmatch() is used.
     """
     def __init__(self, pattern: str, source_dir: str, casefold: bool = False) -> None:
         self.original = pattern  # Raw pattern as written.
@@ -37,9 +35,6 @@ class GitIgnorePattern:
         self.dir_only = pattern.endswith('/')
         if self.dir_only:
             pattern = pattern.rstrip('/')
-        # Normalize the pattern if casefold is enabled.
-        if self.casefold:
-            pattern = pattern.lower()
         self.raw_pattern = pattern
         self.regex: Optional[re.Pattern] = None
         self.compile_regex(pattern)
@@ -47,27 +42,21 @@ class GitIgnorePattern:
     def compile_regex(self, pattern: str) -> None:
         """
         Compiles the given pattern into a regex for matching.
-        For patterns containing a slash, the method constructs a regex that accounts
-        for nested directories.
+        For patterns containing a slash, constructs a regex that accounts for nested directories.
         """
-        if '/' in pattern:
-            components = [comp for comp in pattern.split('/') if comp]
-            regex_str = "^/" if pattern.startswith("/") else "^(?:.*/)?"
-            first = True
-            for comp in components:
-                if comp == "**":
-                    regex_str += ".*"
-                else:
-                    regex_str += ("" if first else "/") + self.translate_component(comp)
-                first = False
-            if self.dir_only:
-                regex_str += "$"
+        components = [comp for comp in pattern.split('/') if comp]
+        regex_str = "^/" if pattern.startswith("/") else "^(?:.*/)?"
+        first = True
+        for comp in components:
+            if comp == "**":
+                regex_str += ".*"
             else:
-                regex_str += r"(?:/.*)?$"
+                regex_str += ("" if first else "/") + self.translate_component(comp)
+            first = False
+        if self.dir_only:
+            regex_str += "$"
         else:
-            regex_str = fnmatch.translate(pattern)
-            regex_str = regex_str.replace(r'\Z(?ms)', '')
-            regex_str = "^/" + regex_str.lstrip("^")
+            regex_str += r"(?:/.*)?$"
         try:
             flag = re.IGNORECASE if self.casefold else 0
             self.regex = re.compile(regex_str, flag)
@@ -120,16 +109,20 @@ class GitIgnorePattern:
         return ''.join(parts)
 
     def hits(self, path: str, is_dir: bool) -> bool:
+        """
+        Checks if the given path matches this pattern.
+        For patterns without a slash, uses wildmatch() on the basename.
+        For slash-containing patterns, matches the normalized path against the compiled regex.
+        """
         if self.dir_only and not is_dir:
             return False
-        # For patterns without a slash, match only against the basename.
+
         if '/' not in self.raw_pattern:
             basename = os.path.basename(path)
-            if self.casefold:
-                basename = basename.lower()
             flags = WM_UNICODE
             if self.casefold:
                 flags |= WM_CASEFOLD
+                basename = basename.lower()
             return wildmatch(self.raw_pattern, basename, flags=flags) == WM_MATCH
         else:
             normalized = '/' + path
@@ -154,7 +147,8 @@ class GitIgnoreScanner:
     def load_patterns(self) -> None:
         """
         Reads .gitignore files in the directory tree and collects patterns.
-        Patterns in deeper directories take precedence.
+        Patterns are sorted in ascending order by directory depth so that
+        deeper (nested) rules override shallower ones.
         """
         collected = []
         for dirpath, dirnames, filenames in os.walk(self.root_dir):
@@ -170,7 +164,8 @@ class GitIgnoreScanner:
                         line = re.sub(r'(?<!\\)#.*', '', line).strip()
                         if line:
                             collected.append((rel_dir, line))
-        collected.sort(key=lambda x: len(x[0].split('/')) if x[0] else 0, reverse=True)
+        # Sort patterns in ascending order (shallow first, then nested ones override).
+        collected.sort(key=lambda x: len(x[0].split('/')) if x[0] else 0, reverse=False)
         self.patterns = []
         for rel_dir, line in collected:
             pat = GitIgnorePattern(line, rel_dir, casefold=self.casefold)
@@ -178,7 +173,7 @@ class GitIgnoreScanner:
 
     def should_ignore(self, path: str, is_dir: bool = False) -> bool:
         """
-        Determines whether the given path should be ignored.
+        Determines whether the given path should be ignored based on loaded patterns.
         """
         normalized = path.replace(os.sep, '/').replace('\\', '/')
         result = None
