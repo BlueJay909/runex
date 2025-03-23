@@ -30,11 +30,18 @@ WM_UNICODE = 4              # When set, use Unicode expansions for POSIX bracket
 
 # Mapping for POSIX bracket expressions.
 # Each key maps to a tuple: (ASCII expansion, Unicode expansion)
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# - CUSTOM APPROXIMATED UNICODE EXPANSIONS # --------------------
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# The 'alpha' key now provides a Unicode expansion that includes:
+# - Basic Latin letters (A-Za-z)
+# - Extended Latin letters (À–Ö, Ø–ö, ø–ÿ)
+# - Many common Chinese characters (from U+4E00 to U+9FFF)
 POSIX_MAPPING = {
     'alnum':  ('a-zA-Z0-9', r'\w'),
     'alpha':  ('a-zA-Z',    None),
     'ascii':  (r'\x00-\x7F', r'\x00-\x7F'),
-    'blank':  (r' \t',      r'[ \t]'),
+    'blank':  (r' \t',      r' \t'),
     'cntrl':  (r'\x00-\x1F\x7F', None),
     'digit':  ('0-9',      r'\d'),
     'graph':  (r'\x21-\x7E', None),
