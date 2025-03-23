@@ -1,11 +1,9 @@
 #!/usr/bin/env python
 import os
-import re
 import shutil
 import tempfile
 import unittest
 from prompt_generator import generate_prompt
-from modules.ignore_logic import GitIgnoreScanner
 
 class ExtremeTest(unittest.TestCase):
     def setUp(self):
