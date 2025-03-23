@@ -121,11 +121,11 @@ class GitIgnorePattern:
 
         if '/' not in self.raw_pattern:
             basename = os.path.basename(path)
-            if self.casefold:
-                basename = basename.lower()
-            flags = WM_UNICODE
+            flags = WM_UNICODE | WM_PATHNAME
+
             if self.casefold:
                 flags |= WM_CASEFOLD
+                basename = basename.lower()
             return wildmatch(self.raw_pattern, basename, flags=flags) == WM_MATCH
         else:
             normalized = '/' + path
