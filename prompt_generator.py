@@ -2,10 +2,9 @@
 """
 Main Prompt Generator - Generates Folder structure and appends file contents
 
-This script builds a textual representation of a project's folder structure
-and appends the contents of files (excluding those ignored by .gitignore rules)
-to generate a complete project prompt. Optionally, the output can be produced
-in JSON format and/or only the directory structure can be shown.
+This script builds a textual or JSON representation of a project's folder structure
+and (optionally) appends the contents of files (excluding those ignored by .gitignore rules)
+to generate a complete project prompt.
 """
 
 import os
@@ -20,10 +19,9 @@ from modules.ignore_logic import GitIgnoreScanner
 
 def build_tree(root_dir: str, prefix: str = "", scanner: Optional[GitIgnoreScanner] = None, parent_path: str = "") -> List[str]:
     """
-    Recursively builds a list of strings representing the folder structure.
+    Recursively builds a list of strings representing the folder structure in text form.
     """
     if scanner is None:
-        # Use the global args.casefold for compatibility with existing tests.
         scanner = GitIgnoreScanner(root_dir, casefold=args.casefold)
         scanner.load_patterns()
 
@@ -52,11 +50,16 @@ def build_tree(root_dir: str, prefix: str = "", scanner: Optional[GitIgnoreScann
             lines += build_tree(root_dir, prefix + ext, scanner, os.path.join(parent_path, name))
     return lines
 
-def generate_folder_structure(root_dir: str, casefold: bool) -> str:
+def generate_folder_structure(root_dir: str, casefold: bool, display_actual_root: bool = True) -> str:
     """
     Generates a string representing the folder structure of the project.
+    If display_actual_root is True (default), the actual folder name (from the absolute path)
+    is used as the root node; otherwise, "." is used.
     """
-    base = os.path.basename(root_dir)
+    if display_actual_root:
+        base = os.path.basename(os.path.abspath(root_dir))
+    else:
+        base = "."
     scanner = GitIgnoreScanner(root_dir, casefold=casefold)
     scanner.load_patterns()
     lines = [f"{base}/"]
@@ -65,7 +68,7 @@ def generate_folder_structure(root_dir: str, casefold: bool) -> str:
 
 def append_file_contents(root_dir: str, casefold: bool) -> str:
     """
-    Appends the contents of all non-ignored files (except .gitignore) in the project.
+    Appends the contents of all non-ignored files (except .gitignore) in the project (text form).
     """
     scanner = GitIgnoreScanner(root_dir, casefold=casefold)
     scanner.load_patterns()
@@ -100,17 +103,11 @@ def append_file_contents(root_dir: str, casefold: bool) -> str:
 def build_tree_data(root_dir: str, scanner: GitIgnoreScanner, parent_path: str = "") -> Dict[str, Union[str, list]]:
     """
     Returns a nested dictionary representing the directory structure.
-    Example:
-    {
-      "name": "myproject",
-      "children": [
-         {"name": ".gitignore", "children": []},
-         {"name": "folderA", "children": [ ... ]}
-      ]
-    }
     """
     full_path = os.path.join(root_dir, parent_path)
-    node = {"name": os.path.basename(full_path) if parent_path else os.path.basename(root_dir), "children": []}
+    # Use the actual folder name if available, else if root is relative then use ".".
+    name = os.path.basename(os.path.abspath(full_path)) if parent_path or os.path.isabs(root_dir) else os.path.basename(root_dir)
+    node = {"name": name, "children": []}
     try:
         for name in sorted([x for x in os.listdir(full_path) if x != '.git']):
             is_dir = os.path.isdir(os.path.join(full_path, name))
@@ -127,7 +124,6 @@ def build_tree_data(root_dir: str, scanner: GitIgnoreScanner, parent_path: str =
 def append_file_contents_data(root_dir: str, scanner: GitIgnoreScanner) -> List[Dict[str, str]]:
     """
     Returns a list of dictionaries describing each non-ignored file.
-    Each dictionary has keys: filename, path, and content.
     """
     files_data = []
     for dirpath, dirnames, filenames in os.walk(root_dir):
@@ -157,16 +153,16 @@ def append_file_contents_data(root_dir: str, scanner: GitIgnoreScanner) -> List[
 # The main "generate_prompt" function with optional JSON and only-structure flags.
 ###############################################################################
 
-def generate_prompt(root_dir: str, casefold: bool, json_mode: bool = False, only_structure: bool = False) -> str:
+def generate_prompt(root_dir: str, casefold: bool, json_mode: bool = False, only_structure: bool = False, display_actual_root: bool = True) -> str:
     """
     Combines the folder structure and file contents to create a full project prompt.
     
-    If json_mode is True, outputs a JSON string; if only_structure is True, omits file contents.
-    
-    Existing behavior (text output with both structure and file contents) is preserved by default.
+    - If json_mode is True, output is in JSON format.
+    - If only_structure is True, file contents are omitted.
+    - If display_actual_root is True (default), the root node shows the actual folder name; if False, it shows ".".
     """
     if not json_mode:
-        structure = generate_folder_structure(root_dir, casefold)
+        structure = generate_folder_structure(root_dir, casefold, display_actual_root)
         if only_structure:
             return f"Project Structure:\n\n{structure}\n"
         else:
@@ -175,7 +171,11 @@ def generate_prompt(root_dir: str, casefold: bool, json_mode: bool = False, only
     else:
         scanner = GitIgnoreScanner(root_dir, casefold=casefold)
         scanner.load_patterns()
+        # Determine the root name.
+        base = os.path.basename(os.path.abspath(root_dir)) if display_actual_root else "."
+        # Build tree data and override the root name.
         tree_data = build_tree_data(root_dir, scanner, parent_path="")
+        tree_data["name"] = base
         result = {"structure": tree_data}
         if not only_structure:
             files_data = append_file_contents_data(root_dir, scanner)
@@ -183,7 +183,7 @@ def generate_prompt(root_dir: str, casefold: bool, json_mode: bool = False, only
         return json.dumps(result, indent=2)
 
 ###############################################################################
-# main() remains nearly unchanged, but passes the new optional flags.
+# main() now supports a new flag: --relative-root which forces the root name to be "."
 ###############################################################################
 
 def main():
@@ -195,17 +195,25 @@ def main():
     parser.add_argument("--casefold", action="store_true", help="Enable case-insensitive matching (WM_CASEFOLD)")
     parser.add_argument("--json", action="store_true", help="Output JSON instead of text")
     parser.add_argument("--only-structure", action="store_true", help="Omit file contents in the output")
+    # New flag: by default, display the actual root folder name. If --relative-root is provided, show "."
+    parser.add_argument("--relative-root", action="store_true", help="Force the root name to be '.' (current behavior)")
     args = parser.parse_args()
 
-    if not os.path.isdir(args.root_dir):
-        print(f"Error: {args.root_dir} is not a valid directory")
+    root_dir = args.root_dir
+    if not os.path.isdir(root_dir):
+        print(f"Error: {root_dir} is not a valid directory")
         return
 
+    # Determine the root display mode:
+    # If --relative-root is provided, display_actual_root is False.
+    display_actual_root = not args.relative_root
+
     prompt = generate_prompt(
-        root_dir=args.root_dir,
+        root_dir=root_dir,
         casefold=args.casefold,
         json_mode=args.json,
-        only_structure=args.only_structure
+        only_structure=args.only_structure,
+        display_actual_root=display_actual_root
     )
     if args.output_file:
         with open(args.output_file, 'w', encoding='utf-8') as f:
