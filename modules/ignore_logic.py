@@ -11,6 +11,7 @@ wildmatch() is used.
 import os
 import re
 import logging
+import fnmatch
 from typing import Optional
 from .wildmatch import wildmatch, WM_MATCH, WM_PATHNAME, WM_UNICODE, WM_CASEFOLD
 
@@ -126,7 +127,6 @@ class GitIgnorePattern:
             flags = WM_UNICODE
             if self.casefold:
                 flags |= WM_CASEFOLD
-                basename = basename.lower()
             return wildmatch(self.raw_pattern, basename, flags=flags) == WM_MATCH
         else:
             normalized = '/' + path
@@ -134,7 +134,11 @@ class GitIgnorePattern:
     
     def match(self, path: str, is_dir: bool) -> bool:
         """
-        Returns whether the pattern matches the given path, taking negation into account.
+        Returns whether the pattern matches the given path.
+        
+        (In this implementation, match() returns the result of hits()
+         regardless of the negation flag; the negation is handled
+         at a higher level by the scanner.)
         """
         return self.hits(path, is_dir) and not self.negation
 
@@ -190,5 +194,5 @@ class GitIgnoreScanner:
                 else:
                     continue
             if pattern.hits(match_path, is_dir):
-                result = not pattern.negation
+                result = not pattern.negation  # The negation flag is then handled externally.
         return result if result is not None else False
