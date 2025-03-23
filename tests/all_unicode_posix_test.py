@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import unittest
 import re
-import unicodedata
 from modules.wildmatch import (
     wildmatch, WM_MATCH, WM_NOMATCH, WM_UNICODE, 
     POSIX_MAPPING, posix_alpha, posix_cntrl, posix_lower, posix_print,

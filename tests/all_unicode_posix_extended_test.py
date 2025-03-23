@@ -1,11 +1,7 @@
 #!/usr/bin/env python
 import unittest
-import re
-import unicodedata
 from modules.wildmatch import (
-    wildmatch, WM_MATCH, WM_NOMATCH, WM_UNICODE,
-    POSIX_MAPPING, posix_alpha, posix_cntrl, posix_lower, posix_print,
-    posix_punct, posix_upper
+    wildmatch, WM_MATCH, WM_NOMATCH, WM_UNICODE
 )
 
 # For the classes we have custom Unicode–aware functions for in our module,
