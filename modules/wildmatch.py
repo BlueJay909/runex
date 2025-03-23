@@ -16,6 +16,7 @@ Leading slashes are handled so that patterns starting with "/" are anchored to t
 """
 
 import re
+import unicodedata
 
 # Outcome constants.
 WM_ABORT_ALL = -1           # Abort matching entirely.
@@ -28,46 +29,54 @@ WM_CASEFOLD = 1             # Enables case-insensitive matching.
 WM_PATHNAME = 2             # Ensures that '*' does not match '/'
 WM_UNICODE = 4              # When set, use Unicode expansions for POSIX bracket expressions
 
+# ----------------------------------------
+# Custom Unicode–aware functions for selected POSIX classes.
+# ----------------------------------------
+def posix_alpha(ch):
+    return ch.isalpha()
+
+def posix_cntrl(ch):
+    return unicodedata.category(ch) == "Cc"
+
+def posix_lower(ch):
+    return ch.islower()
+
+def posix_print(ch):
+    return ch.isprintable() and not unicodedata.category(ch).startswith("C")
+
+def posix_punct(ch):
+    return unicodedata.category(ch).startswith("P")
+
+def posix_upper(ch):
+    return ch.isupper()
+
+# ----------------------------------------
 # Mapping for POSIX bracket expressions.
-# Each key maps to a tuple: (ASCII expansion, Unicode expansion)
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# - CUSTOM APPROXIMATED UNICODE EXPANSIONS # --------------------
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# The 'alpha' key now provides a Unicode expansion that includes:
-# - Basic Latin letters (A-Za-z)
-# - Extended Latin letters (À–Ö, Ø–ö, ø–ÿ)
-# - Many common Chinese characters (from U+4E00 to U+9FFF)
+# For classes we handle with custom functions in Unicode mode, set the Unicode expansion to None.
 POSIX_MAPPING = {
     'alnum':  ('a-zA-Z0-9', r'\w'),
-    'alpha':  ('a-zA-Z',    None),
+    'alpha':  ('a-zA-Z',    None),   # Use posix_alpha in Unicode mode.
     'ascii':  (r'\x00-\x7F', r'\x00-\x7F'),
-    'blank':  (r' \t',      r' \t'),
-    'cntrl':  (r'\x00-\x1F\x7F', None),
+    'blank':  (' \t',       ' \t'),
+    'cntrl':  (r'\x00-\x1F\x7F', None),  # Use posix_cntrl in Unicode mode.
     'digit':  ('0-9',      r'\d'),
     'graph':  (r'\x21-\x7E', None),
-    'lower':  ('a-z',      None),
-    'print':  (r'\x20-\x7E', None),
-    'punct':  (r"""!"\#$%&'()*+,\-./:;<=>?@\[\\\]^_`{|}~""", None),
-    'space':  (r' \t\r\n\v\f', r'\s'),
-    'upper':  ('A-Z',      None),
+    'lower':  ('a-z',      None),   # Use posix_lower in Unicode mode.
+    'print':  (r'\x20-\x7E', None),   # Use posix_print in Unicode mode.
+    'punct':  (r"""!"\#$%&'()*+,\-./:;<=>?@\[\\\]^_`{|}~""", None),  # Use posix_punct.
+    'space':  (' \t\r\n\v\f', r'\s'),
+    'upper':  ('A-Z',      None),   # Use posix_upper.
     'word':   (r'A-Za-z0-9_', r'\w'),
     'xdigit': (r'A-Fa-f0-9', r'A-Fa-f0-9')
 }
 
 def expand_posix_classes(content: str, flags: int) -> str:
     """
-    Expand POSIX bracket class expressions within the given bracket content.
+    Expand POSIX bracket class expressions within the given content.
     
-    For example, any occurrence of "[:alpha:]" will be replaced by its expansion.
-    If WM_UNICODE is set, the Unicode expansion is used (if available); otherwise,
+    For example, any occurrence of "[:alpha:]" is replaced by its expansion.
+    If WM_UNICODE is set, the Unicode expansion is used if available; otherwise,
     the ASCII expansion is used.
-    
-    Args:
-        content: The raw content inside the bracket expression (without '[' and ']').
-        flags: The matching flags; WM_UNICODE determines which expansion to use.
-        
-    Returns:
-        The content string with all POSIX bracket expressions replaced.
     """
     pattern = re.compile(r'\[:([a-z]+):\]')
     
@@ -83,17 +92,17 @@ def expand_posix_classes(content: str, flags: int) -> str:
 def dowild(pattern: str, text: str, flags: int) -> int:
     """
     Recursively matches the wildcard pattern against the text.
-
+    
     Args:
         pattern: The wildcard pattern (supports *, ?, and bracket expressions,
                  including POSIX bracket expressions like [[:alpha:]]).
-        text: The text (usually a filename or path) to match against.
+        text: The text (usually a filename or path) to match.
         flags: Bitwise flags (WM_CASEFOLD, WM_PATHNAME, WM_UNICODE).
         
     Returns:
         WM_MATCH if text matches, WM_NOMATCH if not, or an abort signal.
     """
-    # Preserve leading slash behavior.
+    # Preserve leading slash.
     if pattern.startswith("/"):
         if not text.startswith("/"):
             return WM_NOMATCH
@@ -106,13 +115,13 @@ def dowild(pattern: str, text: str, flags: int) -> int:
         
         if not text and p_ch != '*':
             return WM_ABORT_ALL
-
+        
         if flags & WM_CASEFOLD:
             p_ch = p_ch.lower()
             t_ch = text[0].lower() if text else ''
         else:
             t_ch = text[0] if text else ''
-
+        
         if p_ch == '\\':
             p += 1
             if p >= len(pattern):
@@ -123,7 +132,7 @@ def dowild(pattern: str, text: str, flags: int) -> int:
             text = text[1:]
             p += 1
             continue
-
+        
         elif p_ch == '?':
             if (flags & WM_PATHNAME) and text[0] == '/':
                 return WM_NOMATCH
@@ -132,7 +141,7 @@ def dowild(pattern: str, text: str, flags: int) -> int:
             text = text[1:]
             p += 1
             continue
-
+        
         elif p_ch == '*':
             while p < len(pattern) and pattern[p] == '*':
                 p += 1
@@ -151,18 +160,13 @@ def dowild(pattern: str, text: str, flags: int) -> int:
                     return WM_ABORT_TO_STARSTAR
                 text = text[1:]
             return WM_ABORT_ALL
-
+        
         elif p_ch == '[':
+            # Use a loop to extract bracket content correctly.
             p += 1  # Skip '['.
-            if p >= len(pattern):
-                return WM_ABORT_ALL
-            negated = False
-            if pattern[p] in ('!', '^'):
-                negated = True
-                p += 1
             start = p
-            # Skip nested POSIX classes.
             while p < len(pattern):
+                # If we encounter "[:", skip until ":]" is found.
                 if pattern[p:p+2] == "[:":
                     idx = pattern.find(":]", p+2)
                     if idx == -1:
@@ -174,33 +178,56 @@ def dowild(pattern: str, text: str, flags: int) -> int:
                     break
                 else:
                     p += 1
-            if p >= len(pattern):
+            if p >= len(pattern) or pattern[p] != ']':
                 return WM_ABORT_ALL
             bracket_content = pattern[start:p]
-            p += 1  # Skip ']'.
-            expanded = expand_posix_classes(bracket_content, flags)
-            if not text:
-                return WM_NOMATCH
-            t_ch = text[0]
-            try:
-                re_flags = re.IGNORECASE if (flags & WM_CASEFOLD) else 0
-                class_regex = re.compile(f"^[{expanded}]$", re_flags)
-            except re.error:
-                return WM_ABORT_ALL
-            matched = bool(class_regex.match(t_ch))
-            if matched == negated:
+            p += 1  # Skip closing ']'.
+            # Check if the entire bracket_content matches the POSIX pattern.
+            m = re.fullmatch(r"\[:([a-z]+):\]", bracket_content, re.IGNORECASE)
+            if m and (flags & WM_UNICODE):
+                cls_key = m.group(1).lower()
+                custom_classes = {
+                    "alpha": posix_alpha,
+                    "cntrl": posix_cntrl,
+                    "lower": posix_lower,
+                    "print": posix_print,
+                    "punct": posix_punct,
+                    "upper": posix_upper
+                }
+                if cls_key in custom_classes:
+                    matched = custom_classes[cls_key](text[0])
+                else:
+                    # Fall back to regex expansion.
+                    expanded = expand_posix_classes(bracket_content, flags)
+                    try:
+                        re_flags = re.IGNORECASE if (flags & WM_CASEFOLD) else 0
+                        class_regex = re.compile(f"^[{expanded}]$", re_flags)
+                    except re.error:
+                        return WM_ABORT_ALL
+                    matched = bool(class_regex.match(text[0]))
+            else:
+                expanded = expand_posix_classes(bracket_content, flags)
+                if not text:
+                    return WM_NOMATCH
+                t_ch = text[0]
+                try:
+                    re_flags = re.IGNORECASE if (flags & WM_CASEFOLD) else 0
+                    class_regex = re.compile(f"^[{expanded}]$", re_flags)
+                except re.error:
+                    return WM_ABORT_ALL
+                matched = bool(class_regex.match(t_ch))
+            
+            if not matched:
                 return WM_NOMATCH
             text = text[1:]
             continue
-
+        
         else:
-            # Instead of comparing text[0] directly, use t_ch (which is lower-cased if needed).
             if not text or t_ch != p_ch:
                 return WM_NOMATCH
             text = text[1:]
             p += 1
             continue
-
     return WM_MATCH if not text else WM_NOMATCH
 
 def wildmatch(pattern: str, text: str, flags: int = 0) -> int:
