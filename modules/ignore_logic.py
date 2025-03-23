@@ -8,11 +8,10 @@ For patterns with a slash, a regex is compiled; for basename-only patterns,
 wildmatch() is used.
 """
 
-import os           # For file system operations.
-import re           # For regular expression operations.
-import logging      # For logging warnings and errors.
-import fnmatch      # For Unix filename pattern matching.
-from typing import Optional  # For type hints.
+import os
+import re
+import logging
+from typing import Optional
 from .wildmatch import wildmatch, WM_MATCH, WM_PATHNAME, WM_UNICODE, WM_CASEFOLD
 
 logging.basicConfig(level=logging.WARNING)
@@ -35,18 +34,16 @@ class GitIgnorePattern:
         self.dir_only = pattern.endswith('/')
         if self.dir_only:
             pattern = pattern.rstrip('/')
-        # Optionally, if casefold is enabled, normalize the pattern to lower-case.
         if self.casefold:
             pattern = pattern.lower()
         self.raw_pattern = pattern
         self.regex: Optional[re.Pattern] = None
-
         self.compile_regex(pattern)
 
     def compile_regex(self, pattern: str) -> None:
         """
         Compiles the given pattern into a regex for matching.
-        For patterns containing a slash, constructs a regex that accounts for nested directories.
+        For patterns with a slash, constructs a regex that accounts for nested directories.
         """
         components = [comp for comp in pattern.split('/') if comp]
         regex_str = "^/" if pattern.startswith("/") else "^(?:.*/)?"
@@ -116,7 +113,7 @@ class GitIgnorePattern:
         """
         Checks if the given path matches this pattern.
         For basename-only patterns, uses wildmatch() on the basename.
-        For slash-containing patterns, matches the normalized path (with a leading slash)
+        For patterns with a slash, matches the normalized path (with a leading slash)
         against the compiled regex.
         """
         if self.dir_only and not is_dir:
@@ -170,7 +167,6 @@ class GitIgnoreScanner:
                         line = re.sub(r'(?<!\\)#.*', '', line).strip()
                         if line:
                             collected.append((rel_dir, line))
-        # Sort patterns in ascending order by directory depth.
         collected.sort(key=lambda x: len(x[0].split('/')) if x[0] else 0, reverse=False)
         self.patterns = []
         for rel_dir, line in collected:

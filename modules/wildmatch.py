@@ -63,9 +63,9 @@ POSIX_MAPPING = {
     'graph':  (r'\x21-\x7E', None),
     'lower':  ('a-z',      None),   # Use posix_lower in Unicode mode.
     'print':  (r'\x20-\x7E', None),   # Use posix_print in Unicode mode.
-    'punct':  (r"""!"\#$%&'()*+,\-./:;<=>?@\[\\\]^_`{|}~""", None),  # Use posix_punct.
+    'punct':  (r"""!"\#$%&'()*+,\-./:;<=>?@\[\\\]^_`{|}~""", None),  # Use posix_punct in Unicode mode.
     'space':  (' \t\r\n\v\f', r'\s'),
-    'upper':  ('A-Z',      None),   # Use posix_upper.
+    'upper':  ('A-Z',      None),   # Use posix_upper in Unicode mode.
     'word':   (r'A-Za-z0-9_', r'\w'),
     'xdigit': (r'A-Fa-f0-9', r'A-Fa-f0-9')
 }
@@ -79,7 +79,6 @@ def expand_posix_classes(content: str, flags: int) -> str:
     the ASCII expansion is used.
     """
     pattern = re.compile(r'\[:([a-z]+):\]')
-    
     def repl(match):
         cls = match.group(1)
         ascii_eq, unicode_eq = POSIX_MAPPING.get(cls, ('', ''))
@@ -112,7 +111,6 @@ def dowild(pattern: str, text: str, flags: int) -> int:
     p = 0
     while p < len(pattern):
         p_ch = pattern[p] if p < len(pattern) else ''
-        
         if not text and p_ch != '*':
             return WM_ABORT_ALL
         
@@ -162,11 +160,11 @@ def dowild(pattern: str, text: str, flags: int) -> int:
             return WM_ABORT_ALL
         
         elif p_ch == '[':
-            # Use a loop to extract bracket content correctly.
+            # Extract the bracket content until the closing ']'
             p += 1  # Skip '['.
             start = p
             while p < len(pattern):
-                # If we encounter "[:", skip until ":]" is found.
+                # If we see a nested POSIX expression, skip it.
                 if pattern[p:p+2] == "[:":
                     idx = pattern.find(":]", p+2)
                     if idx == -1:
@@ -182,7 +180,7 @@ def dowild(pattern: str, text: str, flags: int) -> int:
                 return WM_ABORT_ALL
             bracket_content = pattern[start:p]
             p += 1  # Skip closing ']'.
-            # Check if the entire bracket_content matches the POSIX pattern.
+            # Check if the entire bracket_content is a POSIX class, e.g. "[:alpha:]"
             m = re.fullmatch(r"\[:([a-z]+):\]", bracket_content, re.IGNORECASE)
             if m and (flags & WM_UNICODE):
                 cls_key = m.group(1).lower()
@@ -197,14 +195,12 @@ def dowild(pattern: str, text: str, flags: int) -> int:
                 if cls_key in custom_classes:
                     matched = custom_classes[cls_key](text[0])
                 else:
-                    # Fall back to regex expansion.
-                    expanded = expand_posix_classes(bracket_content, flags)
                     try:
                         re_flags = re.IGNORECASE if (flags & WM_CASEFOLD) else 0
-                        class_regex = re.compile(f"^[{expanded}]$", re_flags)
+                        class_regex = re.compile(f"^[{expand_posix_classes(bracket_content, flags)}]$", re_flags)
                     except re.error:
                         return WM_ABORT_ALL
-                    matched = bool(class_regex.match(text[0]))
+                    matched = bool(class_regex.fullmatch(text[0]))
             else:
                 expanded = expand_posix_classes(bracket_content, flags)
                 if not text:
@@ -215,7 +211,7 @@ def dowild(pattern: str, text: str, flags: int) -> int:
                     class_regex = re.compile(f"^[{expanded}]$", re_flags)
                 except re.error:
                     return WM_ABORT_ALL
-                matched = bool(class_regex.match(t_ch))
+                matched = bool(class_regex.fullmatch(t_ch))
             
             if not matched:
                 return WM_NOMATCH
