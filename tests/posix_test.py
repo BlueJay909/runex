@@ -24,7 +24,7 @@ class PosixTest(unittest.TestCase):
     # For Unicode mode, extended letters are considered alpha.
     POSIX_TEST_CASES_UNICODE = {
         'alnum': (["a", "Z", "0", "9", "文"], ["!", " "]),
-        'alpha': (["a", "Z", "À", "文"], ["1", "!", "ß"]),
+        'alpha': (["a", "Z", "À", "文", "ß"], ["1", "!"]),
         'ascii': (["a", "9", "!"], ["文", "€"]),
         'blank': ([" ", "\t"], ["\n", "a"]),
         'cntrl': (["\x00", "\x1F", "\x7F"], ["A", " "]),
