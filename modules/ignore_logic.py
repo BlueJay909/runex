@@ -11,7 +11,6 @@ wildmatch() is used.
 import os
 import re
 import logging
-import fnmatch
 from typing import Optional
 from .wildmatch import wildmatch, WM_MATCH, WM_PATHNAME, WM_UNICODE, WM_CASEFOLD
 

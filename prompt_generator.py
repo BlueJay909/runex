@@ -22,7 +22,7 @@ def build_tree(root_dir: str, prefix: str = "", scanner: Optional[GitIgnoreScann
     Recursively builds a list of strings representing the folder structure in text form.
     """
     if scanner is None:
-        scanner = GitIgnoreScanner(root_dir, casefold=args.casefold)
+        scanner = GitIgnoreScanner(root_dir)
         scanner.load_patterns()
 
     items = []
@@ -188,15 +188,15 @@ def generate_prompt(root_dir: str, casefold: bool, json_mode: bool = False, only
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Generate project structure and file contents following .gitignore rules"
+        description="Generates a representation of a project directory and file structure following git's .gitignore rules. The output by default appends all file contents. The output can be limited to only display the directory tree omitting the file contents. output formats supported: json, txt ,stdout",
+        epilog="Hopefully it was useful!"
     )
-    parser.add_argument("root_dir", help="Root directory of the project")
-    parser.add_argument("output_file", nargs="?", help="Output file (default: stdout)")
-    parser.add_argument("--casefold", action="store_true", help="Enable case-insensitive matching (WM_CASEFOLD)")
-    parser.add_argument("--json", action="store_true", help="Output JSON instead of text")
-    parser.add_argument("--only-structure", action="store_true", help="Omit file contents in the output")
-    # New flag: by default, display the actual root folder name. If --relative-root is provided, show "."
-    parser.add_argument("--relative-root", action="store_true", help="Force the root name to be '.' (current behavior)")
+    parser.add_argument("root_dir", help="Root directory of the project to be scanned")
+    parser.add_argument("output_file", nargs="?", help="Optional output file (default: stdout)")
+    parser.add_argument("--casefold", "-c", action="store_true", help="Enable case-insensitive matching (WM_CASEFOLD)")
+    parser.add_argument("--json", "-oj", action="store_true", help="Output JSON instead of text")
+    parser.add_argument("--only-structure", "-s", action="store_true", help="Omit file contents in the output")
+    parser.add_argument("--relative-root", "-rr", action="store_true", help="Force the root directory name to be '.' insted of basename")
     args = parser.parse_args()
 
     root_dir = args.root_dir
