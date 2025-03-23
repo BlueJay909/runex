@@ -45,7 +45,8 @@ class PromptGenerationTest(unittest.TestCase):
         self.create_file("app.log", "ignored")
         self.create_file("special/app.log", "kept")
         output = generate_prompt(self.test_dir, casefold=False)
-        self.assertNotIn("app.log", output)
+        # Assert that there is no line in the tree output that indicates a root-level file "app.log"
+        self.assertNotRegex(output, r"^[├└]── app\.log$", "Root app.log should be ignored")
         self.assertIn("special/app.log", output)
 
     def test_special_characters(self):

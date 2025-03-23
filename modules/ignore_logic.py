@@ -35,8 +35,12 @@ class GitIgnorePattern:
         self.dir_only = pattern.endswith('/')
         if self.dir_only:
             pattern = pattern.rstrip('/')
+        # Optionally, if casefold is enabled, normalize the pattern to lower-case.
+        if self.casefold:
+            pattern = pattern.lower()
         self.raw_pattern = pattern
         self.regex: Optional[re.Pattern] = None
+
         self.compile_regex(pattern)
 
     def compile_regex(self, pattern: str) -> None:
@@ -111,14 +115,17 @@ class GitIgnorePattern:
     def hits(self, path: str, is_dir: bool) -> bool:
         """
         Checks if the given path matches this pattern.
-        For patterns without a slash, uses wildmatch() on the basename.
-        For slash-containing patterns, matches the normalized path against the compiled regex.
+        For basename-only patterns, uses wildmatch() on the basename.
+        For slash-containing patterns, matches the normalized path (with a leading slash)
+        against the compiled regex.
         """
         if self.dir_only and not is_dir:
             return False
 
         if '/' not in self.raw_pattern:
             basename = os.path.basename(path)
+            if self.casefold:
+                basename = basename.lower()
             flags = WM_UNICODE
             if self.casefold:
                 flags |= WM_CASEFOLD
@@ -147,8 +154,7 @@ class GitIgnoreScanner:
     def load_patterns(self) -> None:
         """
         Reads .gitignore files in the directory tree and collects patterns.
-        Patterns are sorted in ascending order by directory depth so that
-        deeper (nested) rules override shallower ones.
+        Patterns are sorted in ascending order of directory depth so that deeper rules override.
         """
         collected = []
         for dirpath, dirnames, filenames in os.walk(self.root_dir):
@@ -164,7 +170,7 @@ class GitIgnoreScanner:
                         line = re.sub(r'(?<!\\)#.*', '', line).strip()
                         if line:
                             collected.append((rel_dir, line))
-        # Sort patterns in ascending order (shallow first, then nested ones override).
+        # Sort patterns in ascending order by directory depth.
         collected.sort(key=lambda x: len(x[0].split('/')) if x[0] else 0, reverse=False)
         self.patterns = []
         for rel_dir, line in collected:
@@ -173,7 +179,7 @@ class GitIgnoreScanner:
 
     def should_ignore(self, path: str, is_dir: bool = False) -> bool:
         """
-        Determines whether the given path should be ignored based on loaded patterns.
+        Determines whether the given path should be ignored.
         """
         normalized = path.replace(os.sep, '/').replace('\\', '/')
         result = None
@@ -186,9 +192,6 @@ class GitIgnoreScanner:
                 elif match_path == pattern.source_dir.replace('\\', '/'):
                     match_path = ''
                 else:
-                    continue
-                stripped = pattern.original.lstrip("!")
-                if '/' not in stripped and '/' in match_path:
                     continue
             if pattern.hits(match_path, is_dir):
                 result = not pattern.negation
