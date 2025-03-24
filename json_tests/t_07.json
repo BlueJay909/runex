@@ -1,0 +1,88 @@
+{
+    "gitignore": [
+      "/*.log",
+      "*.tmp"
+    ],
+    "initial_structure": {
+      "structure": {
+        "name": "project",
+        "children": [
+          {
+            "name": ".gitignore"
+          },
+          {
+            "name": "debug.log"
+          },
+          {
+            "name": "debug.tmp"
+          },
+          {
+            "name": "folder",
+            "children": [
+              {
+                "name": "error.log"
+              },
+              {
+                "name": "error.tmp"
+              },
+              {
+                "name": "notes.txt"
+              },
+              {
+                "name": "subsub",
+                "children": [
+                  {
+                    "name": "keep.txt"
+                  },
+                  {
+                    "name": "nested.log"
+                  },
+                  {
+                    "name": "nested.tmp"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "readme.md"
+          }
+        ]
+      }
+    },
+    "tracked_structure": {
+      "structure": {
+        "name": "project",
+        "children": [
+          {
+            "name": ".gitignore"
+          },
+          {
+            "name": "folder",
+            "children": [
+              {
+                "name": "error.log"
+              },
+              {
+                "name": "notes.txt"
+              },
+              {
+                "name": "subsub",
+                "children": [
+                  {
+                    "name": "keep.txt"
+                  },
+                  {
+                    "name": "nested.log"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "readme.md"
+          }
+        ]
+      }
+    }
+}

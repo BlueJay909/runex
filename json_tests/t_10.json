@@ -1,0 +1,84 @@
+{
+    "gitignore": [
+      "data/*",
+      "!data/reports/"
+    ],
+    "initial_structure": {
+      "structure": {
+        "name": "project",
+        "children": [
+          {
+            "name": ".gitignore"
+          },
+          {
+            "name": "config.json"
+          },
+          {
+            "name": "data",
+            "children": [
+              {
+                "name": "reports",
+                "children": [
+                  {
+                    "name": "old",
+                    "children": [
+                      {
+                        "name": "old1.csv"
+                      },
+                      {
+                        "name": "old2.csv"
+                      }
+                    ]
+                  },
+                  {
+                    "name": "report1.csv"
+                  },
+                  {
+                    "name": "report2.csv"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "src",
+            "children": [
+              {
+                "name": "code.txt"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "tracked_structure": {
+      "structure": {
+        "name": "project",
+        "children": [
+          {
+            "name": ".gitignore"
+          },
+          {
+            "name": "config.json"
+          },
+          {
+            "name": "data",
+            "children": [
+              {
+                "name": "reports",
+                "children": []
+              }
+            ]
+          },
+          {
+            "name": "src",
+            "children": [
+              {
+                "name": "code.txt"
+              }
+            ]
+          }
+        ]
+      }
+    }
+}

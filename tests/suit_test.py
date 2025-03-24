@@ -5,8 +5,9 @@ import json
 import subprocess
 import sys
 import glob
+import difflib
 
-# Directory where developers can drop test case JSON files.
+# Directory where test case JSON files are stored.
 TEST_CASES_DIR = "json_tests"  # Modify as needed.
 
 class TestGitignoreCases(unittest.TestCase):
@@ -18,7 +19,6 @@ class TestGitignoreCases(unittest.TestCase):
             with open(file_path, "r") as f:
                 try:
                     test_case = json.load(f)
-                    # Optionally record the filename for error reporting.
                     test_case["_filename"] = os.path.basename(file_path)
                     cls.test_cases.append(test_case)
                 except json.JSONDecodeError as e:
@@ -27,9 +27,9 @@ class TestGitignoreCases(unittest.TestCase):
     def create_structure(self, node, base_path, gitignore_content=None):
         """
         Recursively create file/directory structure from a JSON node.
-        Files are nodes without a "children" attribute.
-        Directories have a "children" attribute (empty for empty directories).
-        If the file is .gitignore, write the provided gitignore content.
+        Files (nodes without a "children" key) are created as files.
+        Directories (nodes with "children") are created as directories.
+        For .gitignore files, write the provided content.
         """
         name = node.get("name")
         children = node.get("children", None)
@@ -48,8 +48,7 @@ class TestGitignoreCases(unittest.TestCase):
                 for child in children:
                     self.create_structure(child, target_path, gitignore_content)
             else:
-                # This is an empty directory (has "children": [] in the JSON).
-                # If it's .gitignore, write its content.
+                # Empty directory.
                 if name == ".gitignore":
                     with open(target_path, "w") as f:
                         if gitignore_content is not None:
@@ -58,7 +57,7 @@ class TestGitignoreCases(unittest.TestCase):
                             f.write("")
                 else:
                     os.makedirs(target_path, exist_ok=True)
-
+    
     def build_structure(self, structure_json, base_path, gitignore_content=None):
         """
         Create the full structure starting from the top-level "structure" key.
@@ -70,7 +69,7 @@ class TestGitignoreCases(unittest.TestCase):
     
     def run_prompt_generator(self, directory):
         """
-        Run the prompt_generator.py script on the given directory with -oj -s options.
+        Run prompt_generator.py on the given directory with -oj -s options.
         """
         cmd = [sys.executable, "prompt_generator.py", directory, "-oj", "-s"]
         result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
@@ -81,9 +80,9 @@ class TestGitignoreCases(unittest.TestCase):
     def normalize_tree(self, node):
         """
         Normalize a tree node to a tuple:
-         - For directories (node has "children"): (name, sorted_list_of_normalized_children)
-         - For files (node does not have "children"): (name, None)
-        This normalization allows for order-insensitive comparisons.
+          - For directories (node has "children"): (name, sorted list of normalized children)
+          - For files (node does not have "children"): (name, None)
+        This allows order-insensitive comparison.
         """
         name = node["name"]
         if "children" in node:
@@ -93,6 +92,21 @@ class TestGitignoreCases(unittest.TestCase):
         else:
             return (name, None)
 
+    def get_diff(self, expected, output):
+        """
+        Generate a unified diff between expected and output JSON strings.
+        """
+        expected_str = json.dumps(expected, indent=2, sort_keys=True)
+        output_str = json.dumps(output, indent=2, sort_keys=True)
+        diff_lines = list(difflib.unified_diff(
+            expected_str.splitlines(),
+            output_str.splitlines(),
+            fromfile="expected",
+            tofile="output",
+            lineterm=""
+        ))
+        return "\n".join(diff_lines)
+
     def test_gitignore_cases(self):
         for idx, test_case in enumerate(self.test_cases):
             with self.subTest(test_case=test_case.get("_filename", f"Case {idx}")):
@@ -101,28 +115,27 @@ class TestGitignoreCases(unittest.TestCase):
                 expected_structure = test_case.get("tracked_structure")
                 
                 with tempfile.TemporaryDirectory() as tmpdir:
-                    # Build the initial file structure in the temporary directory.
+                    # Build the initial file structure.
                     root_dir = self.build_structure(initial_structure, tmpdir, gitignore_content)
-                    
-                    # Run the prompt_generator script on the created directory.
+                    # Run the prompt_generator script.
                     output = self.run_prompt_generator(root_dir)
                     try:
                         output_json = json.loads(output)
                     except json.JSONDecodeError as e:
                         self.fail(f"Output is not valid JSON for {test_case.get('_filename') or f'Case {idx}'}:\n{output}\nError: {e}")
                     
-                    # Extract the top-level "structure" nodes.
+                    # Extract top-level "structure" nodes.
                     expected_tree = expected_structure.get("structure", expected_structure)
                     output_tree = output_json.get("structure", output_json)
                     
                     norm_expected = self.normalize_tree(expected_tree)
                     norm_output = self.normalize_tree(output_tree)
                     
-                    self.assertEqual(
-                        norm_output,
-                        norm_expected,
-                        f"Test case {test_case.get('_filename') or idx} failed.\nExpected (normalized): {norm_expected}\nGot (normalized): {norm_output}"
-                    )
+                    try:
+                        self.assertEqual(norm_output, norm_expected)
+                    except AssertionError:
+                        diff = self.get_diff(norm_expected, norm_output)
+                        self.fail(f"Test case {test_case.get('_filename') or idx} failed.\nDiff:\n{diff}")
 
 if __name__ == "__main__":
     unittest.main()

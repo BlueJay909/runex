@@ -1,0 +1,71 @@
+{
+    "gitignore": [
+      "__pycache__/",
+      "*.py[cod]"
+    ],
+    "initial_structure": {
+      "structure": {
+        "name": "project",
+        "children": [
+          {
+            "name": ".gitignore"
+          },
+          {
+            "name": "__pycache__",
+            "children": [
+              {
+                "name": "main.cpython-39.pyc"
+              },
+              {
+                "name": "main.cpython-39.pyo"
+              }
+            ]
+          },
+          {
+            "name": "data",
+            "children": [
+              {
+                "name": "data.txt"
+              },
+              {
+                "name": "script.pyc"
+              }
+            ]
+          },
+          {
+            "name": "helper.py"
+          },
+          {
+            "name": "main.py"
+          },
+          {
+            "name": "plugin.pyd"
+          }
+        ]
+      }
+    },
+    "tracked_structure": {
+      "structure": {
+        "name": "project",
+        "children": [
+          {
+            "name": ".gitignore"
+          },
+          {
+            "name": "data",
+            "children": [
+              {
+                "name": "data.txt"
+              }
+            ]
+          },
+          {
+            "name": "helper.py"
+          },
+          {
+            "name": "main.py"
+          }
+        ]
+      }
+    }
+  }

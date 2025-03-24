@@ -1,0 +1,119 @@
+{
+    "gitignore": [
+      "*",
+      "!*.sql",
+      "!*/",
+      "!.gitignore"
+    ],
+    "initial_structure": {
+      "structure": {
+        "name": "project",
+        "children": [
+          {
+            "name": ".gitignore"
+          },
+          {
+            "name": "README.md"
+          },
+          {
+            "name": "config.yaml"
+          },
+          {
+            "name": "data",
+            "children": [
+              {
+                "name": "data.json"
+              },
+              {
+                "name": "data.sql"
+              },
+              {
+                "name": "nested",
+                "children": [
+                  {
+                    "name": "nested.sql"
+                  },
+                  {
+                    "name": "nested.txt"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "notes.txt"
+          },
+          {
+            "name": "schema.sql"
+          },
+          {
+            "name": "src",
+            "children": [
+              {
+                "name": "code.py"
+              },
+              {
+                "name": "query.sql"
+              },
+              {
+                "name": "subdir",
+                "children": [
+                  {
+                    "name": "archive.sql"
+                  },
+                  {
+                    "name": "script.js"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "tracked_structure": {
+      "structure": {
+        "name": "project",
+        "children": [
+          {
+            "name": ".gitignore"
+          },
+          {
+            "name": "data",
+            "children": [
+              {
+                "name": "data.sql"
+              },
+              {
+                "name": "nested",
+                "children": [
+                  {
+                    "name": "nested.sql"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "schema.sql"
+          },
+          {
+            "name": "src",
+            "children": [
+              {
+                "name": "query.sql"
+              },
+              {
+                "name": "subdir",
+                "children": [
+                  {
+                    "name": "archive.sql"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }

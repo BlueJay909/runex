@@ -1,0 +1,102 @@
+{
+    "gitignore": [
+      "**/logs/"
+    ],
+    "initial_structure": {
+      "structure": {
+        "name": "project",
+        "children": [
+          {
+            "name": ".gitignore"
+          },
+          {
+            "name": "README.md"
+          },
+          {
+            "name": "logs",
+            "children": [
+              {
+                "name": "app.log"
+              },
+              {
+                "name": "app.txt"
+              }
+            ]
+          },
+          {
+            "name": "src",
+            "children": [
+              {
+                "name": "logs",
+                "children": [
+                  {
+                    "name": "debug.log"
+                  },
+                  {
+                    "name": "debug.txt"
+                  }
+                ]
+              },
+              {
+                "name": "main.c"
+              },
+              {
+                "name": "main.log"
+              },
+              {
+                "name": "utils",
+                "children": [
+                  {
+                    "name": "helper.txt"
+                  },
+                  {
+                    "name": "logs",
+                    "children": [
+                      {
+                        "name": "deep.log"
+                      },
+                      {
+                        "name": "deep.txt"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "tracked_structure": {
+      "structure": {
+        "name": "project",
+        "children": [
+          {
+            "name": ".gitignore"
+          },
+          {
+            "name": "README.md"
+          },
+          {
+            "name": "src",
+            "children": [
+              {
+                "name": "main.c"
+              },
+              {
+                "name": "main.log"
+              },
+              {
+                "name": "utils",
+                "children": [
+                  {
+                    "name": "helper.txt"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }

@@ -1,0 +1,129 @@
+{
+    "gitignore": [
+      "*.o",
+      "*.exe",
+      "build/"
+    ],
+    "initial_structure": {
+      "structure": {
+        "name": "project",
+        "children": [
+          {
+            "name": ".gitignore"
+          },
+          {
+            "name": "bin",
+            "children": [
+              {
+                "name": "README.md"
+              },
+              {
+                "name": "helper.o"
+              },
+              {
+                "name": "tool.exe"
+              }
+            ]
+          },
+          {
+            "name": "build",
+            "children": [
+              {
+                "name": "docs",
+                "children": [
+                  {
+                    "name": "readme.txt"
+                  }
+                ]
+              },
+              {
+                "name": "lib",
+                "children": [
+                  {
+                    "name": "lib.a"
+                  }
+                ]
+              },
+              {
+                "name": "output.o"
+              }
+            ]
+          },
+          {
+            "name": "main.cpp"
+          },
+          {
+            "name": "main.o"
+          },
+          {
+            "name": "program.exe"
+          },
+          {
+            "name": "src",
+            "children": [
+              {
+                "name": "module.cpp"
+              },
+              {
+                "name": "module.o"
+              },
+              {
+                "name": "sub",
+                "children": [
+                  {
+                    "name": "test.cpp"
+                  },
+                  {
+                    "name": "test.o"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "utils.h"
+          }
+        ]
+      }
+    },
+    "tracked_structure": {
+      "structure": {
+        "name": "project",
+        "children": [
+          {
+            "name": ".gitignore"
+          },
+          {
+            "name": "bin",
+            "children": [
+              {
+                "name": "README.md"
+              }
+            ]
+          },
+          {
+            "name": "main.cpp"
+          },
+          {
+            "name": "src",
+            "children": [
+              {
+                "name": "module.cpp"
+              },
+              {
+                "name": "sub",
+                "children": [
+                  {
+                    "name": "test.cpp"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "utils.h"
+          }
+        ]
+      }
+    }
+}

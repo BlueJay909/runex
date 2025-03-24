@@ -1,0 +1,113 @@
+{
+    "gitignore": [
+      "node_modules/",
+      "dist/",
+      ".env",
+      "*.log"
+    ],
+    "initial_structure": {
+      "structure": {
+        "name": "project",
+        "children": [
+          {
+            "name": ".env"
+          },
+          {
+            "name": ".gitignore"
+          },
+          {
+            "name": "config.yaml"
+          },
+          {
+            "name": "dist",
+            "children": [
+              {
+                "name": "bundle.js"
+              },
+              {
+                "name": "css",
+                "children": [
+                  {
+                    "name": "style.css"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "error.log"
+          },
+          {
+            "name": "index.js"
+          },
+          {
+            "name": "node_modules",
+            "children": [
+              {
+                "name": "mod",
+                "children": [
+                  {
+                    "name": "file.js"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "src",
+            "children": [
+              {
+                "name": "main.js"
+              },
+              {
+                "name": "notes.log"
+              },
+              {
+                "name": "utils",
+                "children": [
+                  {
+                    "name": "debug.log"
+                  },
+                  {
+                    "name": "util.js"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "tracked_structure": {
+      "structure": {
+        "name": "project",
+        "children": [
+          {
+            "name": ".gitignore"
+          },
+          {
+            "name": "config.yaml"
+          },
+          {
+            "name": "index.js"
+          },
+          {
+            "name": "src",
+            "children": [
+              {
+                "name": "main.js"
+              },
+              {
+                "name": "utils",
+                "children": [
+                  {
+                    "name": "util.js"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }

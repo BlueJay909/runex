@@ -1,0 +1,77 @@
+{
+    "gitignore": [
+      "node_modules/"
+    ],
+    "initial_structure": {
+      "structure": {
+        "name": "project",
+        "children": [
+          {
+            "name": ".gitignore"
+          },
+          {
+            "name": "app.js"
+          },
+          {
+            "name": "config.json"
+          },
+          {
+            "name": "lib",
+            "children": [
+              {
+                "name": "libfile.txt"
+              }
+            ]
+          },
+          {
+            "name": "node_modules",
+            "children": [
+              {
+                "name": "left-pad",
+                "children": [
+                  {
+                    "name": "index.js"
+                  },
+                  {
+                    "name": "package.json"
+                  }
+                ]
+              },
+              {
+                "name": "nested",
+                "children": [
+                  {
+                    "name": "foo.txt"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "tracked_structure": {
+      "structure": {
+        "name": "project",
+        "children": [
+          {
+            "name": ".gitignore"
+          },
+          {
+            "name": "app.js"
+          },
+          {
+            "name": "config.json"
+          },
+          {
+            "name": "lib",
+            "children": [
+              {
+                "name": "libfile.txt"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }

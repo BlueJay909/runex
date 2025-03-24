@@ -1,0 +1,75 @@
+{
+    "gitignore": [
+      "*.log"
+    ],
+    "initial_structure": {
+      "structure": {
+        "name": "project",
+        "children": [
+          {
+            "name": ".gitignore"
+          },
+          {
+            "name": "error.log"
+          },
+          {
+            "name": "info.log"
+          },
+          {
+            "name": "logs",
+            "children": [
+              {
+                "name": "server.cfg"
+              },
+              {
+                "name": "server.log"
+              }
+            ]
+          },
+          {
+            "name": "readme.md"
+          },
+          {
+            "name": "src",
+            "children": [
+              {
+                "name": "code.py"
+              },
+              {
+                "name": "debug.log"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "tracked_structure": {
+      "structure": {
+        "name": "project",
+        "children": [
+          {
+            "name": ".gitignore"
+          },
+          {
+            "name": "logs",
+            "children": [
+              {
+                "name": "server.cfg"
+              }
+            ]
+          },
+          {
+            "name": "readme.md"
+          },
+          {
+            "name": "src",
+            "children": [
+              {
+                "name": "code.py"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }

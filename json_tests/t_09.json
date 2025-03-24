@@ -1,0 +1,66 @@
+{
+    "gitignore": [
+      "*.log",
+      "!important.log"
+    ],
+    "initial_structure": {
+      "structure": {
+        "name": "project",
+        "children": [
+          {
+            "name": ".gitignore"
+          },
+          {
+            "name": "debug.log"
+          },
+          {
+            "name": "doc.txt"
+          },
+          {
+            "name": "important.log"
+          },
+          {
+            "name": "src",
+            "children": [
+              {
+                "name": "debug.log"
+              },
+              {
+                "name": "important.log"
+              },
+              {
+                "name": "notes.txt"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "tracked_structure": {
+      "structure": {
+        "name": "project",
+        "children": [
+          {
+            "name": ".gitignore"
+          },
+          {
+            "name": "doc.txt"
+          },
+          {
+            "name": "important.log"
+          },
+          {
+            "name": "src",
+            "children": [
+              {
+                "name": "important.log"
+              },
+              {
+                "name": "notes.txt"
+              }
+            ]
+          }
+        ]
+      }
+    }
+}
