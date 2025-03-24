@@ -1,0 +1,21 @@
+{
+    "gitignore": [],
+    "initial_structure": {
+        "structure": {
+            "name": "project",
+            "children": [
+                {"name": ".gitignore"},
+                {"name": "file.txt"}
+            ]
+        }
+    },
+    "tracked_structure": {
+        "structure": {
+            "name": "project",
+            "children": [
+                {"name": ".gitignore"},
+                {"name": "file.txt"}
+            ]
+        }
+    }
+}
