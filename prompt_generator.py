@@ -103,23 +103,37 @@ def append_file_contents(root_dir: str, casefold: bool) -> str:
 def build_tree_data(root_dir: str, scanner: GitIgnoreScanner, parent_path: str = "") -> Dict[str, Union[str, list]]:
     """
     Returns a nested dictionary representing the directory structure.
+    
+    - For directories, the returned node always has a "children" key (which may be empty).
+    - For files, the node is represented simply as {"name": <filename>}.
     """
     full_path = os.path.join(root_dir, parent_path)
-    # Use the actual folder name if available, else if root is relative then use ".".
-    name = os.path.basename(os.path.abspath(full_path)) if parent_path or os.path.isabs(root_dir) else os.path.basename(root_dir)
-    node = {"name": name, "children": []}
-    try:
-        for name in sorted([x for x in os.listdir(full_path) if x != '.git']):
-            is_dir = os.path.isdir(os.path.join(full_path, name))
-            rel_path = os.path.join(parent_path, name) if parent_path else name
-            if not scanner.should_ignore(rel_path, is_dir):
-                if is_dir:
-                    node["children"].append(build_tree_data(root_dir, scanner, rel_path))
-                else:
-                    node["children"].append({"name": name, "children": []})
-    except PermissionError:
-        pass
+    if parent_path == "":
+        # For the root node, use the absolute folder name.
+        name = os.path.basename(os.path.abspath(root_dir))
+    else:
+        name = os.path.basename(parent_path)
+    
+    # Check if this is a directory
+    if os.path.isdir(full_path):
+        node = {"name": name, "children": []}
+        try:
+            for nm in sorted([x for x in os.listdir(full_path) if x != '.git']):
+                is_dir = os.path.isdir(os.path.join(full_path, nm))
+                rel_path = os.path.join(parent_path, nm) if parent_path else nm
+                if not scanner.should_ignore(rel_path, is_dir):
+                    if is_dir:
+                        node["children"].append(build_tree_data(root_dir, scanner, rel_path))
+                    else:
+                        # For file nodes, do not add a "children" key.
+                        node["children"].append({"name": nm})
+        except PermissionError:
+            pass
+    else:
+        # If for some reason full_path isn't a directory, return a file node.
+        node = {"name": name}
     return node
+
 
 def append_file_contents_data(root_dir: str, scanner: GitIgnoreScanner) -> List[Dict[str, str]]:
     """
@@ -160,6 +174,7 @@ def generate_prompt(root_dir: str, casefold: bool, json_mode: bool = False, only
     - If json_mode is True, output is in JSON format.
     - If only_structure is True, file contents are omitted.
     - If display_actual_root is True (default), the root node shows the actual folder name; if False, it shows ".".
+    - In the JSON output, directories always have a "children" key, whereas file nodes do not.
     """
     if not json_mode:
         structure = generate_folder_structure(root_dir, casefold, display_actual_root)
