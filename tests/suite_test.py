@@ -8,7 +8,7 @@ import glob
 import difflib
 
 # Directory where test case JSON files are stored.
-TEST_CASES_DIR = "json_tests"  # Modify as needed.
+TEST_CASES_DIR = "json_test_cases"  # Modify as needed.
 
 class TestGitignoreCases(unittest.TestCase):
     @classmethod
