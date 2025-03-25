@@ -1,4 +1,3 @@
 gitdb
 GitPython
-pyfakefs
 smmap
