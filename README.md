@@ -397,7 +397,7 @@ The initial tests during development were written with AI in an unreliable way (
 
 So now, there is a single test file that actually matters, it is: `tests/suite_test.py`
 
-This, will read and execute against `codetext`'s json output, multiple test cases, written and evaluated by a human, found in a specific dedicated folder.
+This, will read and execute against `codetext`'s json output, multiple test cases, written and evaluated by a human, found in a specific dedicated folder `json_test_cases` all following the naming `t_*.json`.
 
 This will enable **you** to just submit truly tested cases to which the expected git behavior is known, this way we can just make this implementation bulletproof.
 
@@ -440,14 +440,49 @@ That's it, a `json` file:
 
 If the output produced by `codetext` when run against `initial_structure` matches 100% the `tracked_structure` the single test case will be passed.
 
+What about nested `.gitignore files`?
+
+This is how you can do it:
+
+```json
+{
+    "gitignore": ["file.txt"],
+    "initial_structure": {
+        "structure": {
+            "name": "project",
+            "children": [
+                {
+                    "name": ".gitignore",
+                    "contents": ["!file.txt"]
+                },
+                {"name": "file.txt"}
+            ]
+        }
+    },
+    "tracked_structure": {
+        "structure": {
+            "name": "project",
+            "children": [
+                {"name": ".gitignore"},
+                {"name": "file.txt"}
+            ]
+        }
+    }
+}
+```
+
+In the `initial_structure` if you create a child named `.gitignore` and you give it a `contents` key whose value is an array structured just like the array in the simple test cases described before, upon folder creation that file will be written with the specified contents.
+If no contents are provided the program will just leave it empty.
+
 Please, write a lot of edge cases that will make this program **_literally burn_**, this is the only way it will become better.
 
-At `tests/suite_test.py` there is the code that will run all of the `.json` test cases present in the `json_test_cases` folder.
+I mean everything, posix bracket expressions, unicode characters, nested structures combined and coordinated firework explosions etcetera.
 
-The other tests found under `tests` all pass for now, so in theory they should keep passing in the future, but given that they were ai generated... they might just be wrong, a lot of them are duplicated, and i'm not even sure what all of them actually do, they are too many, and i'm too lazy, so, you'll do the work if you want the tool!
+At `tests/suite_test.py` there is the code that will run all of the `t_*.json` test cases present in the `json_test_cases` folder.
 
-> [!NOTE]
-> At the moment nested `.gitignore` behavior is not built into the `json` format test suite `suite_test.py` but it will be implemented in a similar format (if possible) in the future.
+The other tests found under `tests` all pass for now, so in theory the program should be kept so that they keep passing in the future, but given that they were all AI generated... they might just be wrong, a lot of them are duplicated, and i'm not even sure what all of them actually do, they are too many, and i'm too lazy, so, **_you'll do the work if you want the tool!_**
+
+The main intended way of testing this program from now on is adding tests under the folder `json_test_cases`
 
 ## Use of AI during development
 
