@@ -1,28 +1,35 @@
 # CodeText
 > A context generation tool to bring vibe coding in your life... or do even more.
 
+---
+
 ## Introduction
+
 `codetext` is a python tool that generates a `plain-text` or `json` representation of a **project's directory structure** (_plus file contents_), following Git's own `.gitignore` path and file matching rules.
 
 > _Everything's close enough... `until it isn't.`_
 
-> [!NOTE]
+> [!NOTE]  
 > Before using this program it is highly recommended you read the [`Use of AI during development`](#use-of-ai-during-development) paragraph
 
+---
+
 ## Example output(s)
+
 _Let's see if this can be good for you, will it be love at first sight?_
 
 ### Default behavior
+
 #### `plain-text`
 > no args needed
 
-You ask:
-```
+**You ask:**
+```bash
 python prompt_generator.py .
 ```
 
-You get:
-```
+**You get:**
+```plaintext
 Project Structure:
 
 my-project/
@@ -43,15 +50,16 @@ Hey there
 if __name__ == "__main__":
     print("Hello World!")
 ```
+
 #### `json`
 > add `-oj`
 
-You ask:
-```
+**You ask:**
+```bash
 python prompt_generator.py . -oj
 ```
 
-You get:
+**You get:**
 ```json
 {
   "structure": {
@@ -83,17 +91,21 @@ You get:
   ]
 }
 ```
+
+---
+
 ### No need for file contents?
 > just add `-s`
 
 #### `plain text`
-You ask:
-```
+
+**You ask:**
+```bash
 python prompt_generator.py . -s
 ```
 
-You get:
-```
+**You get:**
+```plaintext
 Project Structure:
 
 my-project/
@@ -102,13 +114,15 @@ my-project/
 │   └── next-big-thing.py
 └── tests/
 ```
+
 #### `json`
-You ask:
-```
+
+**You ask:**
+```bash
 python prompt_generator.py . -oj -s
 ```
 
-You get:
+**You get:**
 ```json
 {
   "structure": {
@@ -133,18 +147,22 @@ You get:
   }
 }
 ```
+
+---
+
 So, you got this far.
 
 You _might_ need this tool? <br>
 Well...
 
 <details>
-<summary>What have we learned other than that?</summary>
-
-> Answer:
-_You ask, You get_ <br>
-
+  <summary>What have we learned other than that?</summary>
+  
+  > Answer:  
+  _You ask, You get_ <br>
 </details>
+
+---
 
 ## Purpose of This Program
 
@@ -152,23 +170,31 @@ The _og_ scope of _the program_ was to cater the need for an easy and quick way 
 
 If you want that, _we_ (me and gpt) have a [`codetext visual studio code extension`](#) available.
 
-## Usage - deep dive
+---
 
-`prompt_generator.py` `[-h]` `[--casefold]` `[--json]` `[--only-structure]` `[--relative-root]` `<root_dir>` `[output_file]`
+## Usage - Deep Dive
 
 ```
-positional arguments:
-  root_dir              Root directory of the project to be scanned
-  output_file           Optional output file (default: stdout)
+prompt_generator.py [-h] [--casefold] [--json] [--only-structure] [--relative-root] <root_dir> [output_file]
 ```
-```
-options:
-  -h, --help            show this help message and exit
-  --casefold, -c        Enable case-insensitive matching (WM_CASEFOLD)
-  --json, -oj           Output JSON instead of text
-  --only-structure, -s  Omit file contents in the output
-  --relative-root, -rr  Force the root directory name to be '.' insted of basename
-```
+
+### Positional arguments:
+- **root_dir**  
+  Root directory of the project to be scanned
+- **output_file**  
+  Optional output file (default: stdout)
+
+### Options:
+- `-h, --help`  
+  show this help message and exit
+- `--casefold, -c`  
+  Enable case-insensitive matching (WM_CASEFOLD)
+- `--json, -oj`  
+  Output JSON instead of text
+- `--only-structure, -s`  
+  Omit file contents in the output
+- `--relative-root, -rr`  
+  Force the root directory name to be '.' instead of basename
 
 In the default mode, after traversing the specified project directory, `codetext` builds and concatenates into a single file (or stdout):
 
@@ -177,13 +203,17 @@ In the default mode, after traversing the specified project directory, `codetext
 
 The same output can be also requested in a `json` format and for both you can request only the structure of the project to be returned.
 
+---
+
 ## Examples
 
-### tool executed with the `--only-structure` arg on the "." directory:
+### Tool executed with the `--only-structure` arg on the "." directory:
 
-venvnicolobalestrino@Nicolos-Air codetext % `python prompt_generator.py . -s`
-
+```bash
+venvnicolobalestrino@Nicolos-Air codetext % python prompt_generator.py . -s
 ```
+
+```plaintext
 Project Structure:
 
 codetext/
@@ -225,12 +255,16 @@ codetext/
     ├── te_test.py
     └── wildmatch_test.py
 ```
-___
 
-### tool executed with the `--only-structure` and `--json` args on the "." directory:
+---
 
-venvnicolobalestrino@Nicolos-Air codetext % `python prompt_generator.py . -oj -s`
+### Tool executed with the `--only-structure` and `--json` args on the "." directory:
+
+```bash
+venvnicolobalestrino@Nicolos-Air codetext % python prompt_generator.py . -oj -s
 ```
+
+```json
 {
   "structure": {
     "name": "codetext",
@@ -359,7 +393,7 @@ venvnicolobalestrino@Nicolos-Air codetext % `python prompt_generator.py . -oj -s
 
 The `plain text` output without the `-s` will output everything, following the `.gitignore` rules:
 
-```
+```plaintext
 Project Structure:
 
 ...tree representation...
@@ -380,14 +414,16 @@ etc etc etc etc
 ```
 
 The `json` output will follow this standard:
-- files will never have a children attribute
+- files will never have a children attribute  
 - directories, even if empty, will always have a children attribute
 
 That's how you will be able to differentiate between them.
 
-in `-s` mode the following will be omitted:
-- "path" - full file path
+In `-s` mode the following will be omitted:
+- "path" - full file path  
 - "content" - actual file source content
+
+---
 
 ## Testing
 
@@ -403,9 +439,8 @@ This will enable **you** to just submit truly tested cases to which the expected
 
 The test format goes as follows:
 
-ex, t_00.json
-
-```
+#### ex, t_00.json
+```json
 {
     "gitignore": [],
     "initial_structure": {
@@ -433,17 +468,16 @@ That's it, a `json` file:
 
 - `"gitignore": []` is an array containing strings that represent ignore rules, `"gitignore": ["file.txt", "file2.csv"]` ignores those two files, `"gitignore": ["!file.txt", "!file2.csv"]` unignores them and so on, see each element of the array as being one line of a `.gitignore`.
 
-- `"initial_structure"` will be used by the script to build, using `tempfile`, the actual directory and file structure to test against
+- `"initial_structure"` will be used by the script to build, using `tempfile`, the actual directory and file structure to test against  
     - the `.gitignore`, if present in the `initial_structure`, will be populated with the contents found in the array of _step 1_.
 
 - `"tracked_structure"` is the expected behavior, if our script correctly mimics `.gitignore` rules, it will produce this output.
 
 If the output produced by `codetext` when run against `initial_structure` matches 100% the `tracked_structure` the single test case will be passed.
 
-What about nested `.gitignore files`?
+### What about nested `.gitignore files`?
 
 This is how you can do it:
-
 ```json
 {
     "gitignore": ["file.txt"],
@@ -471,7 +505,7 @@ This is how you can do it:
 }
 ```
 
-In the `initial_structure` if you create a child named `.gitignore` and you give it a `contents` key whose value is an array structured just like the array in the simple test cases described before, upon folder creation that file will be written with the specified contents.
+In the `initial_structure` if you create a child named `.gitignore` and you give it a `contents` key whose value is an array structured just like the array in the simple test cases described before, upon folder creation that file will be written with the specified contents.  
 If no contents are provided the program will just leave it empty.
 
 Please, write a lot of edge cases that will make this program **_literally burn_**, this is the only way it will become better.
@@ -484,17 +518,20 @@ The other tests found under `tests` all pass for now, so in theory the program s
 
 The main intended way of testing this program from now on is adding tests under the folder `json_test_cases`
 
+---
+
 ## Use of AI during development
 
 **Keep in mind**: this was written extensively with the use of AI llm models, in particular you can find code from OpenAI o3-mini-high, o3-mini - Deepseek R1 - Gemini 2.0 Flash
 
-`o3-mini-high` overrall kept this project together,
-when it got stuck i used `Deepseek R1` to get it-unstuck,
+`o3-mini-high` overrall kept this project together,  
+when it got stuck i used `Deepseek R1` to get it-unstuck,  
 `Gemini 2.0 Flash`, well i played with it for a while but for now wasn't really helpful (it truly wasn't i can safely say now)
 
 Code and Comments as well as knowledge on how git works come from the AI, and i just kind of directed the whole thing by approximation and intuition, in fact, the only thing that is not AI generated is this readme.
 
 This code is not guaranteed to mimic 100% the behavior of the `.gitignore` ignore logic of the master and commander (c git) - it is the dream though, but, well, don't ask for the differences between .gitignore and this, because the AI doenn't know for now, and i certainly don't. I guess that it's close enough.
 
+---
 
 Hopefully it was useful!
