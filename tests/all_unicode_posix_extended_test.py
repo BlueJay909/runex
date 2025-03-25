@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import unittest
-from modules.wildmatch import (
+from codetext.wildmatch import (
     wildmatch, WM_MATCH, WM_NOMATCH, WM_UNICODE
 )
 

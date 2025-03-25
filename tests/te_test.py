@@ -5,12 +5,12 @@ import os
 import subprocess
 from git import Repo
 
-from modules.ignore_logic import (
+from codetext.ignore_logic import (
     GitIgnorePattern,
     GitIgnoreScanner
 )
 
-from prompt_generator import (
+from codetext.core import (
     generate_prompt,
     generate_folder_structure
 )

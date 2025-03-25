@@ -3,7 +3,7 @@ import os
 import shutil
 import tempfile
 import unittest
-from modules.ignore_logic import GitIgnoreScanner
+from codetext.ignore_logic import GitIgnoreScanner
 
 class IgnoreLogicTest(unittest.TestCase):
     def setUp(self):

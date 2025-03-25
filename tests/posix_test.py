@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import unittest
-from modules.wildmatch import wildmatch, WM_MATCH, WM_NOMATCH, WM_UNICODE
+from codetext.wildmatch import wildmatch, WM_MATCH, WM_NOMATCH, WM_UNICODE
 
 class PosixTest(unittest.TestCase):
     # For each POSIX class, we define (positive_examples, negative_examples)

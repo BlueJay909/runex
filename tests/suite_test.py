@@ -82,12 +82,12 @@ class TestGitignoreCases(unittest.TestCase):
     
     def run_prompt_generator(self, directory):
         """
-        Run prompt_generator.py on the given directory with -oj -s options.
+        Run the codetext CLI on the given directory with -oj -s options.
         """
-        cmd = [sys.executable, "prompt_generator.py", directory, "-oj", "-s"]
+        cmd = [sys.executable, "-m", "codetext.cli", directory, "-oj", "-s"]
         result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         if result.returncode != 0:
-            self.fail(f"prompt_generator.py returned non-zero exit code.\nStderr: {result.stderr}")
+            self.fail(f"codetext.cli returned non-zero exit code.\nStderr: {result.stderr}")
         return result.stdout
 
     def normalize_tree(self, node):
@@ -130,7 +130,7 @@ class TestGitignoreCases(unittest.TestCase):
                 with tempfile.TemporaryDirectory() as tmpdir:
                     # Build the initial file structure.
                     root_dir = self.build_structure(initial_structure, tmpdir, gitignore_content)
-                    # Run the prompt_generator script.
+                    # Run the codetext CLI tool.
                     output = self.run_prompt_generator(root_dir)
                     try:
                         output_json = json.loads(output)

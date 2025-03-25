@@ -3,7 +3,7 @@ import os
 import shutil
 import tempfile
 import unittest
-from prompt_generator import generate_prompt
+from codetext.core import generate_prompt
 
 class ExtremeTest(unittest.TestCase):
     def setUp(self):
