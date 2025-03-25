@@ -1,14 +1,79 @@
 # Codetext
-
-`codetext` is a python tool that generates a plain text or json representation of a project's directory structure (plus file contents) following Git's `.gitignore` path and file matching rules.
-
-Without further ado let's share the motto of this project:
-
 _Well_ <br>
 _I guess that it's close enough until it isn't._
+<br>
+
+## Introduction
+`codetext` is a python tool that generates a `plain-text` or `json` representation of a **project's directory structure** (plus file contents), following Git's own `.gitignore` path and file matching rules.
+
+**_Without further ado let's share the motto of this project!_**
+
 
 > [!NOTE]
 > Before using this program it is highly recommended you read the [`Use of AI during development`](#use-of-ai-during-development) paragraph
+
+## Example output
+> plain-text output
+```
+python prompt_generator.py ./my-project
+```
+```
+Project Structure:
+
+my-project/
+├── .gitignore
+├── src/
+│   └── next-big-thing.py
+└── tests/
+
+
+# File: next-big-thing.py
+# Path: src/next-big-thing.py
+
+#!/usr/bin/env python
+"""
+Hey there
+"""
+    
+if __name__ == "__main__":
+    print("Hello World!")
+```
+> json output
+```
+python prompt_generator.py ./my-project -oj
+```
+```json
+{
+  "structure": {
+    "name": "my-project",
+    "children": [
+      {
+        "name": ".gitignore"
+      },
+      {
+        "name": "src",
+        "children": [
+          {
+            "name": "next-big-thing.py"
+          }
+        ]
+      },
+      {
+        "name": "tests",
+        "children": []
+      }
+    ]
+  },
+  "files": [
+    {
+      "filename": "next-big-thing.py",
+      "path": "src/next-big-thing.py",
+      "content": "#!/usr/bin/env python\n\"\"\"\nHey there\n\"\"\"\n    \nif __name__ == \"__main__\":\n    print(\"Hello World!\")\n"
+    }
+  ]
+}
+```
+
 
 ## Purpose of This Program
 
