@@ -24,12 +24,17 @@ class TestGitignoreCases(unittest.TestCase):
                 except json.JSONDecodeError as e:
                     print(f"Error decoding {file_path}: {e}")
 
-    def create_structure(self, node, base_path, gitignore_content=None):
+    def create_structure(self, node, base_path, global_gitignore_content=None, level=0):
         """
         Recursively create file/directory structure from a JSON node.
-        Files (nodes without a "children" key) are created as files.
-        Directories (nodes with "children") are created as directories.
-        For .gitignore files, write the provided content.
+        - Files (nodes without a "children" key) are created as files.
+        - Directories (nodes with a "children" key) are created as directories.
+        
+        For a node named ".gitignore":
+          - If the node has a "contents" field, write that.
+          - Else, if it is at level 1 (a direct child of the project root) and
+            global_gitignore_content is provided, write that.
+          - Otherwise, create an empty file.
         """
         name = node.get("name")
         children = node.get("children", None)
@@ -38,33 +43,41 @@ class TestGitignoreCases(unittest.TestCase):
         if children is None:
             # Treat as a file.
             with open(target_path, "w") as f:
-                if name == ".gitignore" and gitignore_content is not None:
-                    f.write("\n".join(gitignore_content))
+                if name == ".gitignore":
+                    if "contents" in node:
+                        f.write("\n".join(node["contents"]))
+                    elif level == 1 and global_gitignore_content is not None:
+                        f.write("\n".join(global_gitignore_content))
+                    else:
+                        f.write("")
                 else:
                     f.write("")
         else:
-            if children:  # Non-empty directory.
+            if children:
                 os.makedirs(target_path, exist_ok=True)
                 for child in children:
-                    self.create_structure(child, target_path, gitignore_content)
+                    self.create_structure(child, target_path, global_gitignore_content, level=level+1)
             else:
                 # Empty directory.
                 if name == ".gitignore":
                     with open(target_path, "w") as f:
-                        if gitignore_content is not None:
-                            f.write("\n".join(gitignore_content))
+                        if "contents" in node:
+                            f.write("\n".join(node["contents"]))
+                        elif level == 1 and global_gitignore_content is not None:
+                            f.write("\n".join(global_gitignore_content))
                         else:
                             f.write("")
                 else:
                     os.makedirs(target_path, exist_ok=True)
-    
+
     def build_structure(self, structure_json, base_path, gitignore_content=None):
         """
         Create the full structure starting from the top-level "structure" key.
         Returns the path to the root directory.
         """
         root_node = structure_json["structure"]
-        self.create_structure(root_node, base_path, gitignore_content)
+        # Call create_structure with level 0 for the root.
+        self.create_structure(root_node, base_path, gitignore_content, level=0)
         return os.path.join(base_path, root_node["name"])
     
     def run_prompt_generator(self, directory):
