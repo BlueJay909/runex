@@ -16,17 +16,21 @@ from .wildmatch import wildmatch, WM_MATCH, WM_PATHNAME, WM_UNICODE, WM_CASEFOLD
 
 logging.basicConfig(level=logging.WARNING)
 
+
 class GitIgnorePattern:
     """
     Represents a single .gitignore pattern.
-    
+
     Processes the pattern for negation and directory-only rules.
     For patterns with a slash, compiles a regex (with proper anchors);
     for basename-only patterns, wildmatch() is used.
     """
+
     def __init__(self, pattern: str, source_dir: str, casefold: bool = False) -> None:
         self.original = pattern  # Raw pattern as written.
-        self.source_dir = source_dir  # Relative directory where this pattern was defined.
+        self.source_dir = (
+            source_dir  # Relative directory where this pattern was defined.
+        )
         self.casefold = casefold
         self.negation = pattern.startswith('!')
         if self.negation:
@@ -76,7 +80,7 @@ class GitIgnorePattern:
             c = component[i]
             if c == '\\':
                 if i + 1 < len(component):
-                    parts.append(re.escape(component[i+1]))
+                    parts.append(re.escape(component[i + 1]))
                     i += 2
                 else:
                     parts.append(re.escape(c))
@@ -96,7 +100,7 @@ class GitIgnorePattern:
                 while j < len(component) and component[j] != ']':
                     j += 1
                 if j < len(component):
-                    content = component[i+1:j]
+                    content = component[i + 1 : j]
                     if negate:
                         content = '^' + content[1:]
                     parts.append(f'[{content}]')
@@ -130,22 +134,24 @@ class GitIgnorePattern:
         else:
             normalized = '/' + path
             return bool(self.regex and self.regex.fullmatch(normalized))
-    
+
     def match(self, path: str, is_dir: bool) -> bool:
         """
         Returns whether the pattern matches the given path.
-        
+
         (In this implementation, match() returns the result of hits()
          regardless of the negation flag; the negation is handled
          at a higher level by the scanner.)
         """
         return self.hits(path, is_dir) and not self.negation
 
+
 class GitIgnoreScanner:
     """
     Walks through the directory tree starting at root_dir and determines,
     based on collected .gitignore patterns, whether a file or directory should be ignored.
     """
+
     def __init__(self, root_dir: str, casefold: bool = False) -> None:
         self.root_dir = os.path.abspath(root_dir)
         self.casefold = casefold
@@ -187,11 +193,13 @@ class GitIgnoreScanner:
             if pattern.source_dir:
                 prefix = pattern.source_dir.replace('\\', '/') + '/'
                 if match_path.startswith(prefix):
-                    match_path = match_path[len(prefix):]
+                    match_path = match_path[len(prefix) :]
                 elif match_path == pattern.source_dir.replace('\\', '/'):
                     match_path = ''
                 else:
                     continue
             if pattern.hits(match_path, is_dir):
-                result = not pattern.negation  # The negation flag is then handled externally.
+                result = (
+                    not pattern.negation
+                )  # The negation flag is then handled externally.
         return result if result is not None else False
