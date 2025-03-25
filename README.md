@@ -1,22 +1,27 @@
-# Codetext
-_Well_ <br>
-_I guess that it's close enough until it isn't._
-<br>
+# CodeText
+> A context generation tool to bring vibe coding in your life... or do even more.
 
 ## Introduction
-`codetext` is a python tool that generates a `plain-text` or `json` representation of a **project's directory structure** (plus file contents), following Git's own `.gitignore` path and file matching rules.
+`codetext` is a python tool that generates a `plain-text` or `json` representation of a **project's directory structure** (_plus file contents_), following Git's own `.gitignore` path and file matching rules.
 
-**_Without further ado let's share the motto of this project!_**
-
+> _Everything's close enough... `until it isn't.`_
 
 > [!NOTE]
 > Before using this program it is highly recommended you read the [`Use of AI during development`](#use-of-ai-during-development) paragraph
 
-## Example output
-> plain-text output
+## Example output(s)
+_Let's see if this can be good for you, will it be love at first sight?_
+
+### Default behavior
+#### `plain-text`
+> no args needed
+
+You ask:
 ```
-python prompt_generator.py ./my-project
+python prompt_generator.py .
 ```
+
+You get:
 ```
 Project Structure:
 
@@ -38,10 +43,15 @@ Hey there
 if __name__ == "__main__":
     print("Hello World!")
 ```
-> json output
+#### `json`
+> add `-oj`
+
+You ask:
 ```
-python prompt_generator.py ./my-project -oj
+python prompt_generator.py . -oj
 ```
+
+You get:
 ```json
 {
   "structure": {
@@ -73,15 +83,76 @@ python prompt_generator.py ./my-project -oj
   ]
 }
 ```
+### No need for file contents?
+> just add `-s`
 
+#### `plain text`
+You ask:
+```
+python prompt_generator.py . -s
+```
+
+You get:
+```
+Project Structure:
+
+my-project/
+├── .gitignore
+├── src/
+│   └── next-big-thing.py
+└── tests/
+```
+#### `json`
+You ask:
+```
+python prompt_generator.py . -oj -s
+```
+
+You get:
+```json
+{
+  "structure": {
+    "name": "my-project",
+    "children": [
+      {
+        "name": ".gitignore"
+      },
+      {
+        "name": "src",
+        "children": [
+          {
+            "name": "next-big-thing.py"
+          }
+        ]
+      },
+      {
+        "name": "tests",
+        "children": []
+      }
+    ]
+  }
+}
+```
+So, you got this far.
+
+You _might_ need this tool? <br>
+Well...
+
+<details>
+<summary>What have we learned other than that?</summary>
+
+> Answer:
+_You ask, You get_ <br>
+
+</details>
 
 ## Purpose of This Program
 
-_The og scope of the program_ was to cater the need of an easy and quick way (see rfc1925 point 7a) of providing "context" to a `large language model` service, without painstakingly crtl-c an ctrl-v(ing) source code out of the IDE into the browser, all while t(c)rying to explain to the llm where a file should be read from and what it should actually do. (you still have to paste it back so at least it's almost half of _the work_ done)
+The _og_ scope of _the program_ was to cater the need for an easy and quick way ([see rfc1925 point 7a](https://www.rfc-editor.org/rfc/rfc1925.txt)) of providing "context" to a `large language model` service, without _painstakingly_ crtl-c an ctrl-v(ing) source code out of the IDE into the browser, all while t(c)rying to explain to the llm where a file should be read from and what it should actually do. (you still have to paste it back to the IDE so at least it's almost half of _the work_ done)
 
-If you want that, we (me and gpt) have the [`codetext visual studio code extension`](#) available.
+If you want that, _we_ (me and gpt) have a [`codetext visual studio code extension`](#) available.
 
-## Usage
+## Usage - deep dive
 
 `prompt_generator.py` `[-h]` `[--casefold]` `[--json]` `[--only-structure]` `[--relative-root]` `<root_dir>` `[output_file]`
 
@@ -99,16 +170,16 @@ options:
   --relative-root, -rr  Force the root directory name to be '.' insted of basename
 ```
 
-In the default mode, after traversing the specified project directory, it builds and concatenates into a single file (or stdout):
+In the default mode, after traversing the specified project directory, `codetext` builds and concatenates into a single file (or stdout):
 
 1. A pretty-printed tree-style output of the folder structure (excluding ignored paths).
 2. A concatenated listing of the file contents found along it's path (excluding ignored files).
 
-The same output can be also requested in a `json` format and for _both_ you can request only the structure of the project to be returned.
+The same output can be also requested in a `json` format and for both you can request only the structure of the project to be returned.
 
 ## Examples
 
-### tool executed with the --only-structure arg on the "." directory:
+### tool executed with the `--only-structure` arg on the "." directory:
 
 venvnicolobalestrino@Nicolos-Air codetext % `python prompt_generator.py . -s`
 
@@ -156,7 +227,7 @@ codetext/
 ```
 ___
 
-### tool executed with the --only-structure --json args on the "." directory:
+### tool executed with the `--only-structure` and `--json` args on the "." directory:
 
 venvnicolobalestrino@Nicolos-Air codetext % `python prompt_generator.py . -oj -s`
 ```
@@ -286,7 +357,7 @@ venvnicolobalestrino@Nicolos-Air codetext % `python prompt_generator.py . -oj -s
 }
 ```
 
-The plain text output without the -s will output everything, following the `.gitignore` rules:
+The `plain text` output without the `-s` will output everything, following the `.gitignore` rules:
 
 ```
 Project Structure:
@@ -308,7 +379,7 @@ _I guess that it's close enough until it isn't._
 etc etc etc etc
 ```
 
-The json output will follow this standard:
+The `json` output will follow this standard:
 - files will never have a children attribute
 - directories, even if empty, will always have a children attribute
 
@@ -320,7 +391,17 @@ in `-s` mode the following will be omitted:
 
 ## Testing
 
-Testing is so important, the initial tests i wrote with AI and are a pain to maintain, so there is a json test suite that will enable everyone to just submit actually humane tested test cases that then we can just run to make this implementation bulletproof, the tests are as follows:
+The goal of this program is to mimic 100% the `.gitignore` logic, so we need a way of testing that.
+
+The initial tests during development were written with AI in an unreliable way (you will find them under the `tests` directory) and were a pain to maintain.
+
+So now, there is a single test file that actually matters, it is: `tests/suite_test.py`
+
+This, will read and execute against `codetext`'s json output, multiple test cases, written and evaluated by a human, found in a specific dedicated folder.
+
+This will enable **you** to just submit truly tested cases to which the expected git behavior is known, this way we can just make this implementation bulletproof.
+
+The test format goes as follows:
 
 ex, t_00.json
 
@@ -348,19 +429,25 @@ ex, t_00.json
 }
 ```
 
-That's it, a json file:
+That's it, a `json` file:
 
-- "gitignore": [] is an array containing strings that represent ignore rules, "gitignore": ["file.txt", "file2.csv"] ignores those two, "gitignore": ["!file.txt", "!file2.csv"] unignores them and so on.
+- `"gitignore": []` is an array containing strings that represent ignore rules, `"gitignore": ["file.txt", "file2.csv"]` ignores those two files, `"gitignore": ["!file.txt", "!file2.csv"]` unignores them and so on, see each element of the array as being one line of a `.gitignore`.
 
-- "initial_structure" will be used by the script to build using tempfile the actual directory structure, and, in the .gitignore if present, it will populate it with what was specified in step 1.
+- `"initial_structure"` will be used by the script to build, using `tempfile`, the actual directory and file structure to test against
+    - the `.gitignore`, if present in the `initial_structure`, will be populated with the contents found in the array of _step 1_.
 
-- "tracked_structure" is the expected behavior, if our script correctly mimics .gitignore rules, it should produce this output.
+- `"tracked_structure"` is the expected behavior, if our script correctly mimics `.gitignore` rules, it will produce this output.
 
-Please, write a lot of edge cases that make this program literally burn, this way it can become better.
+If the output produced by `codetext` when run against `initial_structure` matches 100% the `tracked_structure` the single test case will be passed.
 
-At `tests/suite_test.py` there is the code that will run all of the .json test cases present in the `json_test_cases` folder
+Please, write a lot of edge cases that will make this program **_literally burn_**, this is the only way it will become better.
 
-The other tests all pass for now, but a lot are duplicated and i'm not even sure what they do (AI generated), they are too many, and i'm lazy, so, you'll do the work if you want the tool!
+At `tests/suite_test.py` there is the code that will run all of the `.json` test cases present in the `json_test_cases` folder.
+
+The other tests found under `tests` all pass for now, so in theory they should keep passing in the future, but given that they were ai generated... they might just be wrong, a lot of them are duplicated, and i'm not even sure what all of them actually do, they are too many, and i'm too lazy, so, you'll do the work if you want the tool!
+
+> [!NOTE]
+> At the moment nested .gitignore behavior is not build into the `json` format `suite_test.py` but it will be implemented in a similar format. (if possible)
 
 ## Use of AI during development
 
