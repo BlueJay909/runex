@@ -5,6 +5,7 @@ description = "Generates a textual or json project directory structure represent
 authors = [
     {name = "Nicolò Balestrino",email = "bluejay.ops@gmail.com"}
 ]
+license = "MIT"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
