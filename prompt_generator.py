@@ -198,7 +198,7 @@ def generate_prompt(root_dir: str, casefold: bool, json_mode: bool = False, only
         return json.dumps(result, indent=2)
 
 ###############################################################################
-# main() now supports a new flag: --relative-root which forces the root name to be "."
+# main() - supports: [-h] [-c] [-oj] [-s] [-rr] root_dir [output_file]
 ###############################################################################
 
 def main():
