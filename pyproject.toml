@@ -1,5 +1,5 @@
 [project]
-name = "codetext"
+name = "runex"
 version = "0.1.0"
 description = "Generates a textual or json project directory structure representation following git's .gitignore rules"
 authors = [
@@ -12,7 +12,7 @@ dependencies = [
 ]
 
 [tool.poetry.scripts]
-codetext = "codetext.cli:main"
+runex = "runex.cli:main"
 
 [tool.poetry.group.dev.dependencies]
 gitpython = "^3.1.44"

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import unittest
-from codetext.wildmatch import posix_alpha, posix_cntrl, posix_lower, posix_print, posix_punct, posix_upper
+from runex.wildmatch import posix_alpha, posix_cntrl, posix_lower, posix_print, posix_punct, posix_upper
 
 class CustomPosixTest(unittest.TestCase):
     def test_posix_alpha(self):

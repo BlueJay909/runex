@@ -1,11 +1,11 @@
-# CodeText
+# Runex
 > A context generation tool to bring vibe coding in your life... or do even more.
 
 ---
 
 ## Introduction
 
-`codetext` is a python tool that generates a `plain-text` or `json` representation of a **project's directory structure** (_plus file contents_), following Git's own `.gitignore` path and file matching rules.
+`runex` is a python tool that generates a `plain-text` or `json` representation of a **project's directory structure** (_plus file contents_), following Git's own `.gitignore` path and file matching rules.
 
 > _Everything's close enough... `until it isn't.`_
 
@@ -168,7 +168,7 @@ Well...
 
 The _og_ scope of _the program_ was to cater the need for an easy and quick way ([see rfc1925 point 7a](https://www.rfc-editor.org/rfc/rfc1925.txt)) of providing "context" to a `large language model` service, without _painstakingly_ crtl-c an ctrl-v(ing) source code out of the IDE into the browser, all while t(c)rying to explain to the llm where a file should be read from and what it should actually do. (you still have to paste it back to the IDE so at least it's almost half of _the work_ done)
 
-If you want that, _we_ (me and gpt) have a [`codetext visual studio code extension`](#) available.
+If you want that, _we_ (me and gpt) have a [`runex visual studio code extension`](#) available.
 
 ---
 
@@ -196,7 +196,7 @@ prompt_generator.py [-h] [--casefold] [--json] [--only-structure] [--relative-ro
 - `--relative-root, -rr`  
   Force the root directory name to be '.' instead of basename
 
-In the default mode, after traversing the specified project directory, `codetext` builds and concatenates into a single file (or stdout):
+In the default mode, after traversing the specified project directory, `runex` builds and concatenates into a single file (or stdout):
 
 1. A pretty-printed tree-style output of the folder structure (excluding ignored paths).
 2. A concatenated listing of the file contents found along it's path (excluding ignored files).
@@ -210,13 +210,13 @@ The same output can be also requested in a `json` format and for both you can re
 ### Tool executed with the `--only-structure` arg on the "." directory:
 
 ```bash
-venvnicolobalestrino@Nicolos-Air codetext % python prompt_generator.py . -s
+venvnicolobalestrino@Nicolos-Air runex % python prompt_generator.py . -s
 ```
 
 ```plaintext
 Project Structure:
 
-codetext/
+runex/
 ├── .gitignore
 ├── README.md
 ├── json_test_cases/
@@ -261,13 +261,13 @@ codetext/
 ### Tool executed with the `--only-structure` and `--json` args on the "." directory:
 
 ```bash
-venvnicolobalestrino@Nicolos-Air codetext % python prompt_generator.py . -oj -s
+venvnicolobalestrino@Nicolos-Air runex % python prompt_generator.py . -oj -s
 ```
 
 ```json
 {
   "structure": {
-    "name": "codetext",
+    "name": "runex",
     "children": [
       {
         "name": ".gitignore"
@@ -401,9 +401,9 @@ Project Structure:
 # File: README.md
 # Path: README.md
 
-# Codetext
+# Runex
 
-`codetext` is a python tool that generates a plain text or json representation of a project's directory structure (plus file contents) following Git's `.gitignore` path and file matching rules.
+`runex` is a python tool that generates a plain text or json representation of a project's directory structure (plus file contents) following Git's `.gitignore` path and file matching rules.
 
 Without further ado let's share the motto of this project:
 
@@ -433,7 +433,7 @@ The initial tests during development were written with AI in an unreliable way (
 
 So now, there is a single test file that actually matters, it is: `tests/suite_test.py`
 
-This, will read and execute against `codetext`'s json output, multiple test cases, written and evaluated by a human, found in a specific dedicated folder `json_test_cases` all following the naming `t_*.json`.
+This, will read and execute against `runex`'s json output, multiple test cases, written and evaluated by a human, found in a specific dedicated folder `json_test_cases` all following the naming `t_*.json`.
 
 This will enable **you** to just submit truly tested cases to which the expected git behavior is known, this way we can just make this implementation bulletproof.
 
@@ -473,7 +473,7 @@ That's it, a `json` file:
 
 - `"tracked_structure"` is the expected behavior, if our script correctly mimics `.gitignore` rules, it will produce this output.
 
-If the output produced by `codetext` when run against `initial_structure` matches 100% the `tracked_structure` the single test case will be passed.
+If the output produced by `runex` when run against `initial_structure` matches 100% the `tracked_structure` the single test case will be passed.
 
 ### What about nested `.gitignore files`?
 

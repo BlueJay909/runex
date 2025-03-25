@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import unittest
 import re
-from codetext.wildmatch import (
+from runex.wildmatch import (
     wildmatch, WM_MATCH, WM_NOMATCH, WM_UNICODE, 
     POSIX_MAPPING, posix_alpha, posix_cntrl, posix_lower, posix_print,
     posix_punct, posix_upper

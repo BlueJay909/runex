@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 """
-Advanced tests for codetext (formerly prompt_generator.py) against official .gitignore rules.
+Advanced tests for runex (formerly prompt_generator.py) against official .gitignore rules.
 
 These tests create temporary directory trees and .gitignore files according to
-the official .gitignore pattern format. They then run the codetext CLI tool in JSON mode
+the official .gitignore pattern format. They then run the runex CLI tool in JSON mode
 (with --only-structure) and compare the parsed directory structure (as a nested JSON object)
 against the expected structure.
 
@@ -20,7 +20,7 @@ import sys
 
 def run_prompt_generator(root_dir: str, extra_args=None) -> dict:
     """
-    Run the codetext CLI on the given root directory with --json and --only-structure
+    Run the runex CLI on the given root directory with --json and --only-structure
     plus any extra_args, and return the parsed JSON object.
     """
     if extra_args is None:
@@ -28,14 +28,14 @@ def run_prompt_generator(root_dir: str, extra_args=None) -> dict:
     cmd = [
         sys.executable,
         "-m",
-        "codetext.cli",
+        "runex.cli",
         root_dir,
         "--json",
         "--only-structure"
     ] + extra_args
     proc = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     if proc.returncode != 0:
-        raise RuntimeError(f"codetext.cli failed: {proc.stderr}")
+        raise RuntimeError(f"runex.cli failed: {proc.stderr}")
     try:
         result = json.loads(proc.stdout)
     except json.JSONDecodeError as e:

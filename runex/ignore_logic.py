@@ -1,4 +1,4 @@
-# codetext/ignore_logic.py
+# runex/ignore_logic.py
 import os
 import re
 import logging

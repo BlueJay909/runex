@@ -1,4 +1,4 @@
-# codetext/core.py
+# runex/core.py
 import os
 import json
 from typing import Optional, List, Dict, Union

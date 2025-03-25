@@ -1,6 +1,6 @@
-# codetext/cli.py
+# runex/cli.py
 import click
-from codetext.core import generate_prompt
+from runex.core import generate_prompt
 
 @click.command()
 @click.argument('root_dir', type=click.Path(exists=True, file_okay=False))

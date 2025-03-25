@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Unit tests for the codetext CLI tool in JSON mode (JSON output, --only-structure),
+Unit tests for the runex CLI tool in JSON mode (JSON output, --only-structure),
 using a temporary filesystem to compare actual vs. expected.
 """
 
@@ -31,7 +31,7 @@ class TestPromptGeneratorJsonOnlyStructure(unittest.TestCase):
         cmd = [
             sys.executable,
             "-m",
-            "codetext.cli",
+            "runex.cli",
             self.tmp_dir,
             "--json",
             "--only-structure"

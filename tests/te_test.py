@@ -5,12 +5,12 @@ import os
 import subprocess
 from git import Repo
 
-from codetext.ignore_logic import (
+from runex.ignore_logic import (
     GitIgnorePattern,
     GitIgnoreScanner
 )
 
-from codetext.core import (
+from runex.core import (
     generate_prompt,
     generate_folder_structure
 )
