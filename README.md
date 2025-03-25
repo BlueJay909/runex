@@ -447,7 +447,7 @@ At `tests/suite_test.py` there is the code that will run all of the `.json` test
 The other tests found under `tests` all pass for now, so in theory they should keep passing in the future, but given that they were ai generated... they might just be wrong, a lot of them are duplicated, and i'm not even sure what all of them actually do, they are too many, and i'm too lazy, so, you'll do the work if you want the tool!
 
 > [!NOTE]
-> At the moment nested .gitignore behavior is not build into the `json` format `suite_test.py` but it will be implemented in a similar format. (if possible)
+> At the moment nested `.gitignore` behavior is not built into the `json` format test suite `suite_test.py` but it will be implemented in a similar format (if possible) in the future.
 
 ## Use of AI during development
 
