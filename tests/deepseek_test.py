@@ -1,10 +1,10 @@
 import unittest
 import os
 import tempfile
-from modules.wildmatch import wildmatch, WM_MATCH, WM_NOMATCH, WM_CASEFOLD, WM_PATHNAME, WM_UNICODE
+from runex.wildmatch import wildmatch, WM_MATCH, WM_NOMATCH, WM_CASEFOLD, WM_PATHNAME, WM_UNICODE
 
 # Assuming the original code is in a module named 'gitignore_utils'
-from modules.ignore_logic import GitIgnorePattern, GitIgnoreScanner
+from runex.ignore_logic import GitIgnorePattern, GitIgnoreScanner
 
 class TestGitIgnorePattern(unittest.TestCase):
     def setUp(self):

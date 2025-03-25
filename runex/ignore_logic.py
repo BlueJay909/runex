@@ -1,13 +1,4 @@
-#!/usr/bin/env python
-"""
-Implements .gitignore like logic
-
-This module defines classes to represent .gitignore patterns and to scan a
-directory tree for files/directories that should be ignored based on these rules.
-For patterns with a slash, a regex is compiled; for basename-only patterns,
-wildmatch() is used.
-"""
-
+# runex/ignore_logic.py
 import os
 import re
 import logging
@@ -15,7 +6,6 @@ from typing import Optional
 from .wildmatch import wildmatch, WM_MATCH, WM_PATHNAME, WM_UNICODE, WM_CASEFOLD
 
 logging.basicConfig(level=logging.WARNING)
-
 
 class GitIgnorePattern:
     """
@@ -28,9 +18,8 @@ class GitIgnorePattern:
 
     def __init__(self, pattern: str, source_dir: str, casefold: bool = False) -> None:
         self.original = pattern  # Raw pattern as written.
-        self.source_dir = (
-            source_dir  # Relative directory where this pattern was defined.
-        )
+        self.source_dir = source_dir  # Relative directory where this pattern was defined.
+        
         self.casefold = casefold
         self.negation = pattern.startswith('!')
         if self.negation:

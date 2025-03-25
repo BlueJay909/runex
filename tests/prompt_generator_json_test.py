@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Unit tests for prompt_generator.py (JSON output, --only-structure),
+Unit tests for the runex CLI tool in JSON mode (JSON output, --only-structure),
 using a temporary filesystem to compare actual vs. expected.
 """
 
@@ -10,9 +10,7 @@ import os
 import shutil
 import subprocess
 import json
-
-PROMPT_GEN_SCRIPT = os.path.join(os.path.dirname(__file__), "..", "prompt_generator.py")
-# Adjust the above path if your test file is not in the same structure.
+import sys
 
 class TestPromptGeneratorJsonOnlyStructure(unittest.TestCase):
     def setUp(self):
@@ -31,8 +29,9 @@ class TestPromptGeneratorJsonOnlyStructure(unittest.TestCase):
         if extra_args is None:
             extra_args = []
         cmd = [
-            "python",
-            PROMPT_GEN_SCRIPT,
+            sys.executable,
+            "-m",
+            "runex.cli",
             self.tmp_dir,
             "--json",
             "--only-structure"

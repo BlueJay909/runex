@@ -1,25 +1,13 @@
 #!/usr/bin/env python
 """
-Advanced tests for prompt_generator.py against official .gitignore rules.
+Advanced tests for runex (formerly prompt_generator.py) against official .gitignore rules.
 
 These tests create temporary directory trees and .gitignore files according to
-the official .gitignore pattern format (see Git documentation). They then run the
-prompt_generator script in JSON mode (with --only-structure) and compare the parsed
-directory structure (as a nested JSON object) against the expected structure.
+the official .gitignore pattern format. They then run the runex CLI tool in JSON mode
+(with --only-structure) and compare the parsed directory structure (as a nested JSON object)
+against the expected structure.
 
-Each test case is commented with the expected behavior, for example:
-
-  - Blank lines and comments should be ignored.
-  - A line starting with '#' is a comment (unless escaped).
-  - Trailing spaces are ignored unless quoted.
-  - A leading '!' negates a pattern (and cannot re-include files under an excluded parent).
-  - A slash in the pattern makes it relative to the .gitignore file's location.
-  - A trailing slash causes the pattern to match directories only.
-  - '*' matches any character except a slash.
-  - '**' can match multiple directories.
-  - Excluding everything except a specific directory.
-
-For each scenario the expected directory tree (structure) is defined.
+Each test case is commented with the expected behavior.
 """
 
 import os
@@ -28,27 +16,26 @@ import unittest
 import tempfile
 import shutil
 import subprocess
-
-# Path to prompt_generator.py (adjust if necessary)
-SCRIPT_PATH = os.path.join(os.path.dirname(__file__), "..", "prompt_generator.py")
+import sys
 
 def run_prompt_generator(root_dir: str, extra_args=None) -> dict:
     """
-    Run prompt_generator.py on the given root directory with --json and --only-structure
+    Run the runex CLI on the given root directory with --json and --only-structure
     plus any extra_args, and return the parsed JSON object.
     """
     if extra_args is None:
         extra_args = []
     cmd = [
-        "python",
-        SCRIPT_PATH,
+        sys.executable,
+        "-m",
+        "runex.cli",
         root_dir,
         "--json",
         "--only-structure"
     ] + extra_args
     proc = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     if proc.returncode != 0:
-        raise RuntimeError(f"prompt_generator.py failed: {proc.stderr}")
+        raise RuntimeError(f"runex.cli failed: {proc.stderr}")
     try:
         result = json.loads(proc.stdout)
     except json.JSONDecodeError as e:
@@ -129,12 +116,10 @@ class AdvancedGitignoreTest(unittest.TestCase):
         self.create_file("keep.txt", "keep")
         
         data = run_prompt_generator(self.root)
-        # The top-level should list .gitignore, "keep.txt", and " keep2.txt" should be ignored (depending on exact matching)
-        # For this test we check that "ignore.txt" is not present, and "keep.txt" is.
+        # The top-level should list .gitignore and keep.txt (ignore.txt and " ignore2.txt" should be ignored)
         children = [child["name"] for child in self.get_tree(data)["children"]]
         self.assertNotIn("ignore.txt", children, "Trailing spaces: ignore.txt should be ignored")
         self.assertIn("keep.txt", children, "Trailing spaces: keep.txt should be kept")
-        # Note: The file with a literal leading space (" keep2.txt") will be matched only if it exactly exists.
         self.assertNotIn(" ignore2.txt", children, "Escaped space: file ' ignore2.txt' should be ignored")
 
     def test_negation_unignore(self):
@@ -196,7 +181,6 @@ class AdvancedGitignoreTest(unittest.TestCase):
         
         data = run_prompt_generator(self.root)
         children = [child["name"] for child in self.get_tree(data)["children"]]
-        # logs directory should not appear because it's ignored.
         self.assertNotIn("logs", children, "Trailing slash: directory 'logs' should be ignored")
         self.assertIn("logs.txt", children, "logs.txt should be kept")
 
@@ -248,7 +232,8 @@ class AdvancedGitignoreTest(unittest.TestCase):
             return False
 
         tree = self.get_tree(data)
-        self.assertFalse(find_file(tree, "temp.txt"), "All temp.txt files should be ignored with **/temp.txt rule")
+        self.assertFalse(find_file(tree, "temp.txt"),
+                         "All temp.txt files should be ignored with **/temp.txt rule")
 
 if __name__ == "__main__":
     unittest.main()

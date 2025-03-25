@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import unittest
-from modules.wildmatch import wildmatch, WM_MATCH, WM_NOMATCH, WM_CASEFOLD, WM_PATHNAME, WM_UNICODE
+from runex.wildmatch import wildmatch, WM_MATCH, WM_NOMATCH, WM_CASEFOLD, WM_PATHNAME, WM_UNICODE
 
 class WildmatchTest(unittest.TestCase):
     def debug_test(self, pattern, text, flags):
