@@ -14,7 +14,7 @@ from typing import Optional, List, Dict, Union
 from modules.ignore_logic import GitIgnoreScanner
 
 ###############################################################################
-# Text-based output functions (existing logic)
+# Text-based output functions
 ###############################################################################
 
 def build_tree(root_dir: str, prefix: str = "", scanner: Optional[GitIgnoreScanner] = None, parent_path: str = "") -> List[str]:
@@ -97,7 +97,7 @@ def append_file_contents(root_dir: str, casefold: bool) -> str:
     return '\n'.join(contents)
 
 ###############################################################################
-# JSON-based output functions (new)
+# JSON-based output functions
 ###############################################################################
 
 def build_tree_data(root_dir: str, scanner: GitIgnoreScanner, parent_path: str = "") -> Dict[str, Union[str, list]]:
@@ -164,7 +164,7 @@ def append_file_contents_data(root_dir: str, scanner: GitIgnoreScanner) -> List[
     return files_data
 
 ###############################################################################
-# The main "generate_prompt" function with optional JSON and only-structure flags.
+# The main "generate_prompt" function
 ###############################################################################
 
 def generate_prompt(root_dir: str, casefold: bool, json_mode: bool = False, only_structure: bool = False, display_actual_root: bool = True) -> str:
