@@ -1,6 +1,6 @@
 [project]
 name = "runex"
-version = "0.0.1"
+version = "0.0.2"
 description = "Generates a textual or json project directory structure representation following git's .gitignore rules"
 authors = [
     {name = "Nicolò Balestrino",email = "bluejay.ops@gmail.com"}
