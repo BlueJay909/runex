@@ -1,0 +1,22 @@
+[project]
+name = "codetext"
+version = "0.1.0"
+description = "Generates a textual or json project directory structure representation following git's .gitignore rules"
+authors = [
+    {name = "Your Name",email = "you@example.com"}
+]
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "click (>=8.1.8,<9.0.0)"
+]
+
+[tool.poetry.scripts]
+codetext = "codetext.cli:main"
+
+[tool.poetry.group.dev.dependencies]
+gitpython = "^3.1.44"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
