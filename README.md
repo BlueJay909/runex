@@ -187,7 +187,7 @@ runex [--help] [--casefold] [--json] [--only-structure] [--relative-root] <root_
   Optional output file (default: stdout)
 
 ### Options:
-- `-h, --help`  
+- `--help`  
   show this help message and exit
 - `--casefold, -c`  
   Enable case-insensitive matching (WM_CASEFOLD)
