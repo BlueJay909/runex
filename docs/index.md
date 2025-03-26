@@ -11,7 +11,7 @@ Runex generates a project prompt by scanning your project directory, applying Gi
 
 ## Documentation Overview
 
-- **[Home (Compiled README)](/README.html)**  
+- **[Home](/README.html)**  
   The main README, compiled as HTML, gives you an introduction and overall view of the project.
 
 - **[CLI Documentation](cli.html)**  
