@@ -40,7 +40,7 @@ jobs:
         run: gem install jekyll bundler
 
       - name: Build site with Jekyll
-        run: bundle exec jekyll build --destination _site
+        run: jekyll build --destination _site
 
       - name: Inject Google Site Verification Meta Tag
         run: |
