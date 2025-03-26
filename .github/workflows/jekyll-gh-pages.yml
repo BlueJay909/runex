@@ -1,14 +1,14 @@
 # Sample workflow for building and deploying a Jekyll site to GitHub Pages
-name: Deploy Jekyll with GitHub Pages dependencies preinstalled + google site verification meta tag
+name: Deploy Jekyll with GitHub Pages dependencies preinstalled + Google site verification meta tag
 
 on:
-  # Runs on pushes targeting the default branch
+  # Runs on pushes targeting the default branch (and when specific paths change)
   push:
     paths:
       - 'README.md'
       - 'docs/**'
     branches: ["main"]
-# Allows you to run this workflow manually from the Actions tab
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
@@ -18,7 +18,7 @@ permissions:
   id-token: write
 
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.    
+# Do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
   group: "pages"
   cancel-in-progress: false
@@ -31,7 +31,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Setup Jekyll and Bundler directly without using predefined actions
+      # Setup Ruby and Bundler
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -43,7 +43,7 @@ jobs:
           cd docs
           bundle install
 
-      # Copy the root README.md into the docs folder temporarily so Jekyll processes it
+      # Optionally, copy the root README.md into the docs folder (if you want it processed)
       - name: Copy README to docs folder
         run: cp README.md docs/README.md
 
@@ -53,17 +53,13 @@ jobs:
           cd docs
           bundle exec jekyll build --destination ../_site
 
+      # Inject Google Site Verification Meta Tag into every HTML file
       - name: Inject Google Site Verification Meta Tag
         run: |
           META_TAG='<meta name="google-site-verification" content="JHllWTJvLmNSlis60cxpV1yj0JGRR5XcSqTLJE_A1ww" />'
           find ./_site -name "*.html" -exec sudo sed -i "s|</head>|$META_TAG\n</head>|g" {} +
-      
-      - name: List content
-        run: |
-          pwd
-          ls
-          ls _site
 
+      # Upload the built site as an artifact
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

@@ -1,40 +1,5 @@
-theme: jekyll-theme-chirpy
-
-lang: en
-
 title: Runex
-
-tagline: Documentation and reference page # it will display as the subtitle
-
-description: >- # used by seo meta and the atom feed
-  Documentation for Runex - a tool to generate a project prompt following Git's .gitignore rules.
-
+description: Documentation for Runex - a tool to generate a project prompt following Git's .gitignore rules.
 baseurl: "/runex"
 url: "https://bluejay909.github.io"
-
-
-github:
-  username: BlueJay909
-
-theme_mode: dark
-cdn: "https://chirpy-img.netlify.app"
-
-tabs:
-  - url: /index.html
-    title: Home
-    icon: fas fa-home
-  - url: /README.html
-    title: Readme
-    icon: fab fa-readme
-  - url: /cli.html
-    title: "CLI Documentation"
-    icon: fas fa-terminal
-  - url: /core.html
-    title: "Core Module"
-    icon: fas fa-code
-  - url: /ignore_logic.html
-    title: "Ignore Logic"
-    icon: fas fa-equals
-  - url: /wildmatch.html
-    title: "Wildmatch"
-    icon: fas fa-space-shuttle
+theme: minima
