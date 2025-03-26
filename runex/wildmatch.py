@@ -9,7 +9,7 @@ which is used for matching shell-style wildcard patterns. It supports common wil
   - Bracket expressions (e.g., [abc]) match one character from a set.
 
 It also supports POSIX bracket expressions (e.g., [[:alpha:]]) by mapping them to
-equivalent "normal regular expression" character classes. NOTE: collating sequences and
+equivalent "normal regular expression" character classes. Note: collating sequences and
 character equivalents are not supported.
 
 A word about POSIX, given the following two definitions:
@@ -105,9 +105,8 @@ def posix_upper(ch):
 # character ranges that works for ASCII text, while the Unicode expansion is a regex
 # shorthand or similar mechanism for Unicode text. For some classes (e.g., 'alpha'),
 # the Unicode expansion is None, meaning that a custom function (like posix_alpha) will be used.
-
 #
-# NOTE: Collating sequences and character equivalents are not supported.
+# Note: Collating sequences and character equivalents are not supported.
 POSIX_MAPPING = {
     'alnum': ('a-zA-Z0-9', r'\w'),
     'alpha': ('a-zA-Z', None),  # Use custom function posix_alpha for Unicode.
