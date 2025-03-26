@@ -1,39 +1,56 @@
 #!/usr/bin/env python
-"""
+r"""
 Wildmatch Implementation
 
 This module provides a simplified recursive implementation of Git's C wildmatch logic,
 which is used for matching shell-style wildcard patterns. It supports common wildcards:
   - '*' matches zero or more characters.
   - '?' matches exactly one character.
-  - Bracket expressions, for example, [abc] match one character from a set.
-  
-It also supports POSIX bracket expressions (for example, [[:alpha:]]) by mapping them to equivalent 'regex character classes' - NOTE: collating sequences and character equivalents are not supported.
+  - Bracket expressions (e.g., [abc]) match one character from a set.
 
+It also supports POSIX bracket expressions (e.g., [[:alpha:]]) by mapping them to
+equivalent "normal regular expression" character classes. NOTE: collating sequences and
+character equivalents are not supported.
 
-Given the two following definitions:
-
+A word about POSIX, given the following two definitions:
 1 - 'POSIX Character Classes' or 'POSIX Bracket Expression' == ex: [:alnum:]
-
 2 - 'Normal regular expression Character Classes' or 'normal regex Character Sets' == ex: [0-9a-fA-F]
 
-Here is a digression learned and referenced from "https://www.regular-expressions.info/posixbrackets.html" that explains how we are going to implement POSIX classes ( [:alnum:], [:alpha:] etc etc etc) using only python internally available tools:
+Here is a digression, learned and referenced from "https://www.regular-expressions.info/posixbrackets.html"
+that explains how we are going to implement POSIX classes ([:alnum:], [:alpha:], etc.) using only Python's
+internally available tools:
 
 "
-Generally, only POSIX-compliant regular expression engines have proper and full support for POSIX bracket expressions. Some non-POSIX regex engines support POSIX character classes, but usually don’t support collating sequences and character equivalents. Regular expression engines that support Unicode use Unicode properties and scripts to provide functionality similar to POSIX bracket expressions. In Unicode regex engines, shorthand character classes like \w normally match all relevant Unicode characters, alleviating the need to use locales.
+Generally, only POSIX-compliant regular expression engines have proper and full support for POSIX bracket expressions.
+Some non-POSIX regex engines support POSIX character classes, but usually don't support collating sequences and character equivalents.
+Regular expression engines that support Unicode use Unicode properties and scripts to provide functionality similar to POSIX bracket expressions.
+In Unicode regex engines, shorthand character classes like \w normally match all relevant Unicode characters, alleviating the need to use locales.
 "
 
-The way we handle the POSIX Character Classes / POSIX Bracket Expressions in our wildmatch.py implementation is by mapping them to equivalent (meaning they match the same thing) "normal regular expression" character classes. Those can be used in ASCII and Unicode regular expressions when the POSIX classes are unavailable (and in our case they are unavailable because python's "re" does not support them).
+The way we handle the 'POSIX Character Classes / POSIX Bracket Expressions' in our wildmatch.py implementation,
+is by mapping them to equivalent (meaning they match the same thing) 'normal regular expression' character classes.
+Those 'normal' character classes ex: [0-9a-fA-F] can then be used in ASCII and Unicode regular expressions
+when the POSIX classes are unavailable (and in our case they are unavailable because Python's "re" does not support them).
 
-So, for each 'POSIX class' we map both an ASCII only compatible 'regex character class' and either: 1 - a Unicode compatible 'regex character class', 2 - 'python shorthand syntax' (\w, \t, \d, \s) or 3 - a custom function.
+So, for each 'POSIX class' that we want to support we map _both_ 'an ASCII-only compatible regex character class' and either:
+  1 - a Unicode-compatible regex character class,
+  2 - a Python shorthand syntax (e.g., \w, \t, \d, \s),
+  3 - or a custom function.
+
+This, seems to not make a lot of sense since a lot of the mappings share the same character class for both ascii and unicode,
+but i guess it's a cool concept if somebody wants to port all of this in another language.
 
 Flags:
-  WM_CASEFOLD  - Enables case-insensitive matching. (Default: matching is case sensitive unless this flag is set.)
+  WM_CASEFOLD  - Enables case-insensitive matching.
   WM_PATHNAME  - Prevents '*' from matching '/', ensuring that wildcards do not cross directory boundaries.
-                (Default: '*' will match any character including '/' unless this flag is set.
-                 Note: Git itself never exposes this option to the user.)
+                (Default behavior: Off; however, our core.py explicitly passes WM_PATHNAME to enforce .gitignore rules.)
   WM_UNICODE   - Enables Unicode expansions for POSIX bracket expressions.
-                (Default: POSIX bracket expressions are treated in an ASCII way unless this flag is set.)
+                (Default behavior: Off; our core.py explicitly passes WM_UNICODE so that Unicode-aware matching is used.)
+
+Note:
+  Although WM_PATHNAME and WM_UNICODE are not enabled by default when calling wildmatch directly with no flags,
+  our core.py logic explicitly combines them (i.e., WM_UNICODE | WM_PATHNAME) when performing matching.
+  This ensures that our program strictly follows Git's .gitignore rules regarding wildcard and bracket expression behavior.
 """
 
 import re
@@ -41,13 +58,13 @@ import unicodedata
 
 # Outcome constants for the matching functions.
 WM_ABORT_ALL = -1           # Abort matching entirely.
-WM_ABORT_TO_STARSTAR = -2   # Abort due to restrictions from WM_PATHNAME flag when encountering '/'.
+WM_ABORT_TO_STARSTAR = -2   # Abort due to restrictions from WM_PATHNAME when encountering '/'.
 WM_MATCH = 1                # Indicates that the text fully matches the pattern.
 WM_NOMATCH = 0              # Indicates that the text does not match the pattern.
 
 # Flag constants that control matching behavior.
 WM_CASEFOLD = 1             # When set, matching is case-insensitive.
-WM_PATHNAME = 2             # When set, '*' does not match the '/' character, so wildcards cannot span directory separators.
+WM_PATHNAME = 2             # When set, '*' does not match '/' (wildcards will not cross directory boundaries).
 WM_UNICODE = 4              # When set, POSIX bracket expressions use Unicode expansions.
 
 # ------------------------------------------------------------------------------
@@ -56,9 +73,8 @@ WM_UNICODE = 4              # When set, POSIX bracket expressions use Unicode ex
 # These helper functions are used to test individual characters for membership
 # in a POSIX class when Unicode mode is enabled. They provide the functionality
 # that would otherwise be provided by \p-style regex properties in other languages.
-
 def posix_alpha(ch):
-    """Return True if the character is alphabetic (using Unicode rules)."""
+    """Return True if the character is alphabetic (Unicode-aware)."""
     return ch.isalpha()
 
 def posix_cntrl(ch):
@@ -70,7 +86,7 @@ def posix_lower(ch):
     return ch.islower()
 
 def posix_print(ch):
-    """Return True if the character is printable and is not a control character."""
+    """Return True if the character is printable and not a control character."""
     return ch.isprintable() and not unicodedata.category(ch).startswith("C")
 
 def posix_punct(ch):
@@ -84,35 +100,27 @@ def posix_upper(ch):
 # ------------------------------------------------------------------------------
 # POSIX Bracket Expression Mapping
 # ------------------------------------------------------------------------------
-# This dictionary maps each POSIX character class (or POSIX bracket expression)
-# to two equivalent representations:
-#   1. An ASCII expansion: A string of character ranges that works for ASCII text.
-#   2. A Unicode expansion: A regex shorthand (or similar) that works for Unicode text.
-# For some classes, the Unicode expansion is None, which means we will use a custom
-# function (such as posix_alpha) to perform the matching.
+# This mapping defines, for each POSIX character class (or bracket expression),
+# an ASCII expansion and a Unicode expansion. (see module docstring) The ASCII expansion is a string of
+# character ranges that works for ASCII text, while the Unicode expansion is a regex
+# shorthand or similar mechanism for Unicode text. For some classes (e.g., 'alpha'),
+# the Unicode expansion is None, meaning that a custom function (like posix_alpha) will be used.
+
 #
-# Do not confuse the POSIX term “character class” (as used in bracket expressions) with
-# the typical regular expression character class (or character set). For example, [x-z0-9]
-# is a bracket expression (or POSIX character class), while [0-9a-fA-F] is a normal regex
-# character set.
-#
-# The information in this mapping is based on:
-#   https://www.regular-expressions.info/posixbrackets.html
-#
-# NOTE: We do not support collating sequences and character equivalents.
+# NOTE: Collating sequences and character equivalents are not supported.
 POSIX_MAPPING = {
     'alnum': ('a-zA-Z0-9', r'\w'),
-    'alpha': ('a-zA-Z', None),  # Use custom function posix_alpha in Unicode mode.
+    'alpha': ('a-zA-Z', None),  # Use custom function posix_alpha for Unicode.
     'ascii': (r'\x00-\x7F', r'\x00-\x7F'),
     'blank': (' \t', ' \t'),
-    'cntrl': (r'\x00-\x1F\x7F', None),  # Use posix_cntrl in Unicode mode.
+    'cntrl': (r'\x00-\x1F\x7F', None),  # Use posix_cntrl for Unicode.
     'digit': ('0-9', r'\d'),
     'graph': (r'\x21-\x7E', None),
-    'lower': ('a-z', None),  # Use posix_lower in Unicode mode.
-    'print': (r'\x20-\x7E', None),  # Use posix_print in Unicode mode.
-    'punct': (r"""!"\#$%&'()*+,\-./:;<=>?@\[\\\]^_`{|}~""", None),  # Use posix_punct in Unicode mode.
+    'lower': ('a-z', None),  # Use posix_lower for Unicode.
+    'print': (r'\x20-\x7E', None),  # Use posix_print for Unicode.
+    'punct': (r"""!"\#$%&'()*+,\-./:;<=>?@\[\\\]^_`{|}~""", None),  # Use posix_punct for Unicode.
     'space': (' \t\r\n\v\f', r'\s'),
-    'upper': ('A-Z', None),  # Use posix_upper in Unicode mode.
+    'upper': ('A-Z', None),  # Use posix_upper for Unicode.
     'word': (r'A-Za-z0-9_', r'\w'),
     'xdigit': (r'A-Fa-f0-9', r'A-Fa-f0-9')
 }
@@ -151,31 +159,31 @@ def expand_posix_classes(content: str, flags: int) -> str:
     return pattern.sub(repl, content)
 
 def dowild(pattern: str, text: str, flags: int) -> int:
-    """
-    Recursively match a wildcard pattern against the given text.
+    r"""
+    Recursively match a wildcard pattern against a given text.
 
-    This function implements the core logic for matching a pattern with wildcards and bracket expressions.
-    It supports:
-      - Escaping special characters with a backslash (\\).
-      - The '?' wildcard which matches any single character (but not '/' if WM_PATHNAME is set).
-      - The '*' wildcard which matches any sequence of characters (unless WM_PATHNAME prevents matching '/').
-      - Bracket expressions, such as [abc], including negated ones like [!abc] or [^abc].
-      - POSIX bracket expressions, like [[:alpha:]], by expanding them using expand_posix_classes().
+    This function is the core of the wildmatch algorithm. It processes the pattern character by character,
+    it supports:
+      - Escaping special characters with a '\' to match literals.
+      - The '?' wildcard to match any single character (except '/' if WM_PATHNAME is set).
+      - The '*' wildcard to match any sequence of characters (unless WM_PATHNAME restricts matching '/').
+      - Bracket expressions (e.g., [abc]), including negated expressions ([!abc] or [^abc]).
+      - POSIX bracket expressions (e.g., [[:alpha:]]) by expanding them using expand_posix_classes().
 
     Parameters:
-        pattern (str): The wildcard pattern (for example, "*.txt" or "file?[[:digit:]]").
-        text (str): The text (often a filename or a path) to test against the pattern.
-        flags (int): Bitwise flags that modify matching behavior:
-                     - WM_CASEFOLD: perform case-insensitive matching.
-                     - WM_PATHNAME: do not allow '*' to match '/'.
+        pattern (str): The wildcard pattern to match (e.g., "*.txt" or "file?[[:digit:]]").
+        text (str): The text (often a filename or path) to test against.
+        flags (int): Bitwise flags modifying behavior:
+                     - WM_CASEFOLD: case-insensitive matching.
+                     - WM_PATHNAME: '*' does not match '/'.
                      - WM_UNICODE: use Unicode expansions for POSIX bracket expressions.
 
     Returns:
-        int: WM_MATCH if the text fully matches the pattern,
-             WM_NOMATCH if it does not match,
-             or a special abort value (WM_ABORT_ALL or WM_ABORT_TO_STARSTAR) if matching cannot proceed.
+        int: WM_MATCH - if the text fully matches the pattern,
+             WM_NOMATCH - if it does not match,
+             or an abort signal (WM_ABORT_ALL or WM_ABORT_TO_STARSTAR) if matching cannot proceed.
     """
-    # If the pattern starts with a '/', then the match is anchored at the beginning of the text.
+    # If the pattern is anchored (starts with '/'), ensure the text is also anchored.
     if pattern.startswith("/"):
         if not text.startswith("/"):
             return WM_NOMATCH
@@ -187,7 +195,7 @@ def dowild(pattern: str, text: str, flags: int) -> int:
     while p < len(pattern):
         p_ch = pattern[p] if p < len(pattern) else ''
 
-        # If there is no text left but the pattern expects more (except '*' which can match nothing), abort.
+        # If there is no text left but the pattern expects more (except '*' which can match anything), abort.
         if not text and p_ch != '*':
             return WM_ABORT_ALL
 
@@ -199,7 +207,7 @@ def dowild(pattern: str, text: str, flags: int) -> int:
             t_ch = text[0] if text else ''
 
         if p_ch == '\\':
-            # Handle escape: the character following '\' is matched literally.
+            # Handle escaped characters: match the next character literally.
             p += 1
             if p >= len(pattern):
                 return WM_NOMATCH
@@ -221,11 +229,11 @@ def dowild(pattern: str, text: str, flags: int) -> int:
             continue
 
         elif p_ch == '*':
-            # '*' matches any sequence of characters. Consume all consecutive '*' characters.
+            # '*' matches any sequence of characters.
             while p < len(pattern) and pattern[p] == '*':
                 p += 1
-            # If '*' is the last pattern character, it should match the rest of the text.
             if p >= len(pattern):
+                # If '*' is the last character, it should match all remaining text.
                 if (flags & WM_PATHNAME) and '/' in text:
                     return WM_ABORT_TO_STARSTAR
                 return WM_MATCH
@@ -243,11 +251,11 @@ def dowild(pattern: str, text: str, flags: int) -> int:
             return WM_ABORT_ALL
 
         elif p_ch == '[':
-            # Start of a bracket expression.
+            # Start processing a bracket expression.
             p += 1  # Skip the '['.
-            start = p  # Mark the beginning of the expression.
+            start = p
             while p < len(pattern):
-                # If we find a nested POSIX expression like "[:alpha:]", skip it.
+                # Skip nested POSIX expressions if found.
                 if pattern[p : p + 2] == "[:":
                     idx = pattern.find(":]", p + 2)
                     if idx == -1:
@@ -266,13 +274,13 @@ def dowild(pattern: str, text: str, flags: int) -> int:
             bracket_content = pattern[start:p]
             p += 1  # Skip the closing ']'
 
-            # Check for negation in the bracket expression (indicated by a leading '!' or '^').
+            # Check for negation in the bracket expression.
             negated = False
             if bracket_content and bracket_content[0] in ("!", "^"):
                 negated = True
                 bracket_content = bracket_content[1:]
 
-            # Determine if the entire bracket content is a POSIX bracket expression, e.g., "[:alpha:]".
+            # Check if the entire bracket content is a POSIX expression like "[:alpha:]".
             m = re.fullmatch(r"\[:([a-z]+):\]", bracket_content, re.IGNORECASE)
             if m and (flags & WM_UNICODE):
                 # In Unicode mode, if a custom function is defined for this class, use it.
