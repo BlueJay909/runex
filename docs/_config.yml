@@ -1,4 +1,22 @@
 title: Runex Documentation
-description: Documentation for Runex - a tool to generate a project prompt following Git's .gitignore rules.
-baseurl: "/runex"
-url: "https://bluejay909.github.io"
+description: "Documentation for Runex - a tool to generate a project prompt following Git's .gitignore rules."
+# Set baseurl if your site is deployed under a subpath, e.g., "/runex". Leave empty for custom domains or root.
+baseurl: "/runex" 
+url: "https://bluejay909.github.io" 
+
+# List files outside the normal source folders that Jekyll should include.
+include:
+  - README.md
+
+# Defaults for pages
+defaults:
+  - scope:
+      path: "" # All pages
+    values:
+      layout: default
+
+# Collections can be used if you want to process docs as a separate group:
+collections:
+  docs:
+    output: true
+    permalink: /docs/:name.html
