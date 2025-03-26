@@ -1,5 +1,5 @@
 ---
-layout: home
+layout: page
 title: Runex Documentation
 ---
 
@@ -11,7 +11,7 @@ Runex generates a project prompt by scanning your project directory, applying Gi
 
 ## Documentation Overview
 
-- **[Home]({{ '/README.html' | relative_url }})**  
+- **[Home]({{ site.baseurl }}/README.html)**  
   The main README, compiled as HTML, gives you an introduction and overall view of the project.
 
 - **[CLI Documentation]({{ site.baseurl }}/cli.html)**  

@@ -20,9 +20,12 @@ theme_mode: dark
 cdn: "https://chirpy-img.netlify.app"
 
 tabs:
+  - url: /index.html
+    title: Home
+    icon: fas fa-home
   - url: /README.html
     title: Readme
-    icon: fas fa-home
+    icon: fab fa-readme
   - url: /cli.html
     title: "CLI Documentation"
     icon: fas fa-terminal
@@ -31,7 +34,7 @@ tabs:
     icon: fas fa-code
   - url: /ignore_logic.html
     title: "Ignore Logic"
-    icon: fas fa-ban
+    icon: fas fa-equals
   - url: /wildmatch.html
     title: "Wildmatch"
-    icon: fas fa-sitemap
+    icon: fas fa-space-shuttle
