@@ -1,3 +1,8 @@
+---
+layout: default
+title: Runex Documentation - Core module
+---
+
 # Core Module for Runex – Technical Overview
 
 This document explains how the core module (core.py) works. It focuses on what each function does and clearly explains the difference between "only structure" mode (the `-s` flag) and the default mode that includes file contents.

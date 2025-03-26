@@ -1,3 +1,8 @@
+---
+layout: default
+title: Runex Documentation - CLI module
+---
+
 # CLI Module (runex/cli.py) – Usage Examples
 
 This document explains how to use the CLI tool and what to expect for each option. The CLI is built with Click and calls `generate_prompt()` from `runex.core`. Below are some practical usage scenarios with examples of the initial directory structure, sample .gitignore content (if applicable), and the expected output.

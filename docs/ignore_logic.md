@@ -1,5 +1,6 @@
-Below is a Markdown document that explains, step by step, how a call to `should_ignore` is processed. This guide uses an example and details the order in which functions are called to determine if a file or directory should be ignored according to the rules defined in our ignore logic.
-
+---
+layout: default
+title: Runex Documentation - Ignore Logic module
 ---
 
 # Execution Flow of `should_ignore`

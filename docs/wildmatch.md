@@ -1,3 +1,8 @@
+---
+layout: default
+title: Runex Documentation - Wildmatch module
+---
+
 # Wildmatch Matching and Flag Behavior in Runex
 
 This document explains what happens when our wildmatch function is called and how it behaves with respect to different flags, especially **WM_PATHNAME**. We also cover **WM_UNICODE** and **WM_CASEFOLD** briefly. Finally, we discuss how this logic integrates with our core module to strictly enforce Git's .gitignore rules.
