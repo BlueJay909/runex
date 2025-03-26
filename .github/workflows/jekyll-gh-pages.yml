@@ -51,12 +51,12 @@ jobs:
       - name: Build site with Jekyll
         run: |
           cd docs
-          bundle exec jekyll build --source docs --destination ../_site
+          bundle exec jekyll build --destination ../_site
 
       - name: Inject Google Site Verification Meta Tag
         run: |
           META_TAG='<meta name="google-site-verification" content="JHllWTJvLmNSlis60cxpV1yj0JGRR5XcSqTLJE_A1ww" />'
-          find ../docs/_site -name "*.html" -exec sudo sed -i "s|</head>|$META_TAG\n</head>|g" {} +
+          find ../_site -name "*.html" -exec sudo sed -i "s|</head>|$META_TAG\n</head>|g" {} +
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
