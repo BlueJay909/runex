@@ -37,15 +37,21 @@ jobs:
         with:
           ruby-version: '3.4.2'
 
-      - name: Install Jekyll
-        run: gem install jekyll
+      # Install dependencies using Bundler from the docs folder's Gemfile
+      - name: Install dependencies
+        run: |
+          cd docs
+          bundle install
 
-      # Copy the root README.md into the docs folder temporarily so Jekyll processes it.
+      # Copy the root README.md into the docs folder temporarily so Jekyll processes it
       - name: Copy README to docs folder
         run: cp README.md docs/README.md
 
+      # Build the site using Jekyll from the docs folder
       - name: Build site with Jekyll
-        run: jekyll build --source docs --destination _site
+        run: |
+          cd docs
+          bundle exec jekyll build --destination ../_site
 
       - name: Inject Google Site Verification Meta Tag
         run: |
