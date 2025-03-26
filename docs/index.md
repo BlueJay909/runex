@@ -11,19 +11,19 @@ Runex generates a project prompt by scanning your project directory, applying Gi
 
 ## Documentation Overview
 
-- **[Home](runex/README.html)**  
+- **[Home](/README.html)**  
   The main README, compiled as HTML, gives you an introduction and overall view of the project.
 
-- **[CLI Documentation](runex/cli.html)**  
+- **[CLI Documentation](/cli.html)**  
   Detailed usage examples and explanations for our command-line interface, including flag combinations and expected outputs.
 
-- **[Core Module Documentation](runex/core.html)**  
+- **[Core Module Documentation](/core.html)**  
   An in-depth look at how Runex scans the project directory, filters files using .gitignore rules, and builds the final output.
 
-- **[Ignore Logic Documentation](runex/ignore_logic.html)**  
+- **[Ignore Logic Documentation](/ignore_logic.html)**  
   A technical overview of how our tool processes .gitignore files and determines which files to ignore.
 
-- **[Wildmatch Documentation](runex/wildmatch.html)**  
+- **[Wildmatch Documentation](/wildmatch.html)**  
   A detailed explanation of our wildcard matching implementation, including how flags like WM_CASEFOLD, WM_PATHNAME, and WM_UNICODE affect matching.
 
 ## How to Use This Documentation
