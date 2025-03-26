@@ -1,6 +1,8 @@
 # Runex
 > A context generation tool to bring vibe coding in your life... or do even more.
 
+`pip install runex`
+
 ---
 
 ## Introduction
@@ -25,7 +27,7 @@ _Let's see if this can be good for you, will it be love at first sight?_
 
 **You ask:**
 ```bash
-python prompt_generator.py .
+runex .
 ```
 
 **You get:**
@@ -56,7 +58,7 @@ if __name__ == "__main__":
 
 **You ask:**
 ```bash
-python prompt_generator.py . -oj
+runex . -oj
 ```
 
 **You get:**
@@ -101,7 +103,7 @@ python prompt_generator.py . -oj
 
 **You ask:**
 ```bash
-python prompt_generator.py . -s
+runex . -s
 ```
 
 **You get:**
@@ -119,7 +121,7 @@ my-project/
 
 **You ask:**
 ```bash
-python prompt_generator.py . -oj -s
+runex . -oj -s
 ```
 
 **You get:**
@@ -174,8 +176,8 @@ If you want that, _we_ (me and gpt) have a [`runex visual studio code extension`
 
 ## Usage - Deep Dive
 
-```
-prompt_generator.py [-h] [--casefold] [--json] [--only-structure] [--relative-root] <root_dir> [output_file]
+```bash
+runex [--help] [--casefold] [--json] [--only-structure] [--relative-root] <root_dir> [output_file]
 ```
 
 ### Positional arguments:
@@ -210,7 +212,7 @@ The same output can be also requested in a `json` format and for both you can re
 ### Tool executed with the `--only-structure` arg on the "." directory:
 
 ```bash
-venvnicolobalestrino@Nicolos-Air runex % python prompt_generator.py . -s
+runex . -s
 ```
 
 ```plaintext
@@ -218,6 +220,7 @@ Project Structure:
 
 runex/
 ├── .gitignore
+├── LICENSE
 ├── README.md
 ├── json_test_cases/
 │   ├── t_00.json
@@ -232,13 +235,16 @@ runex/
 │   ├── t_09.json
 │   ├── t_10.json
 │   ├── t_11.json
-│   └── t_12.json
-├── modules/
+│   ├── t_12.json
+│   └── t_13.json
+├── poetry.lock
+├── pyproject.toml
+├── runex/
 │   ├── __init__.py
+│   ├── cli.py
+│   ├── core.py
 │   ├── ignore_logic.py
 │   └── wildmatch.py
-├── prompt_generator.py
-├── requirements.txt
 └── tests/
     ├── __init__.py
     ├── all_unicode_posix_extended_test.py
@@ -261,16 +267,19 @@ runex/
 ### Tool executed with the `--only-structure` and `--json` args on the "." directory:
 
 ```bash
-venvnicolobalestrino@Nicolos-Air runex % python prompt_generator.py . -oj -s
+runex . -oj -s
 ```
 
 ```json
 {
   "structure": {
-    "name": "runex",
+    "name": "codetext",
     "children": [
       {
         "name": ".gitignore"
+      },
+      {
+        "name": "LICENSE"
       },
       {
         "name": "README.md"
@@ -316,14 +325,29 @@ venvnicolobalestrino@Nicolos-Air runex % python prompt_generator.py . -oj -s
           },
           {
             "name": "t_12.json"
+          },
+          {
+            "name": "t_13.json"
           }
         ]
       },
       {
-        "name": "modules",
+        "name": "poetry.lock"
+      },
+      {
+        "name": "pyproject.toml"
+      },
+      {
+        "name": "runex",
         "children": [
           {
             "name": "__init__.py"
+          },
+          {
+            "name": "cli.py"
+          },
+          {
+            "name": "core.py"
           },
           {
             "name": "ignore_logic.py"
@@ -332,12 +356,6 @@ venvnicolobalestrino@Nicolos-Air runex % python prompt_generator.py . -oj -s
             "name": "wildmatch.py"
           }
         ]
-      },
-      {
-        "name": "prompt_generator.py"
-      },
-      {
-        "name": "requirements.txt"
       },
       {
         "name": "tests",
