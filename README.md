@@ -549,7 +549,7 @@ when it got stuck i used `Deepseek R1` to get it-unstuck,
 
 Code and Comments as well as knowledge on how git works come from the AI, and i just kind of directed the whole thing by approximation and intuition, in fact, the only thing that is not AI generated is this readme.
 
-This code is not guaranteed to mimic 100% the behavior of the `.gitignore` ignore logic of the master and commander (c git) - it is the dream though, but, well, don't ask for the differences between .gitignore and this, because the AI doenn't know for now, and i certainly don't. I guess that it's close enough.
+This code is not guaranteed to mimic 100% the behavior of the `.gitignore` ignore logic of the master and commander (c git) - it is the dream though, but, well, don't ask for the differences between .gitignore and this, because the AI doesn't know for now, and i certainly don't. I guess that it's close enough.
 
 ---
 
