@@ -19,14 +19,9 @@ github:
 theme_mode: dark
 cdn: "https://chirpy-img.netlify.app"
 
-nav:
-  - title: Readme
-    url: "{{ '/README.html' | relative_url }}"
-  - title: CLI Usage
-    url: "{{ '/cli.html' | relative_url }}"
-  - title: Core Module
-    url: "{{ '/core.html' | relative_url }}"
-  - title: Ignore Logic
-    url: "{{ '/ignore_logic.html' | relative_url }}"
-  - title: Wildmatch Logic
-    url: "{{ '/wildmatch.html' | relative_url }}"
+header_pages:
+  - index.md
+  - cli.md
+  - core.md
+  - ignore_logic.md
+  - wildmatch.md
