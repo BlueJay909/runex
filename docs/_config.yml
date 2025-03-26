@@ -19,9 +19,15 @@ github:
 theme_mode: dark
 cdn: "https://chirpy-img.netlify.app"
 
-header_pages:
-  - index.md
-  - cli.md
-  - core.md
-  - ignore_logic.md
-  - wildmatch.md
+sidebar:
+  tabs:
+    - name: "Readme"
+      path: README.md
+    - name: "CLI Usage"
+      path: cli.md
+    - name: "Core module"
+      path: core.md
+    - name: "Ignore Logic Module"
+      path: ignore_logic.md
+    - name: "Wildmatch Logic"
+      path: wildmatch.md
