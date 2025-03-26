@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Runex Documentation - Core module
+title: Core Module
 ---
 
 # Core Module for Runex – Technical Overview

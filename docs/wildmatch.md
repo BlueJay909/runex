@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Runex Documentation - Wildmatch module
+title: Wildmatch Module
 ---
 
 # Wildmatch Matching and Flag Behavior in Runex

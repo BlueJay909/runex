@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Runex Documentation
+title: Home
 ---
 
 # Welcome to Runex Documentation

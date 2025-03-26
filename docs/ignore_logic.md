@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Runex Documentation - Ignore Logic module
+title: Ignore Logic Module
 ---
 
 # Execution Flow of `should_ignore`

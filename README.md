@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Runex - A python dream.
+title: Readme
 ---
 
 # Runex
@@ -17,7 +17,7 @@ pip install runex
 
 > _Everything's close enough... `until it isn't.`_
 
-> [!NOTE]  
+> [!NOTE]
 > Before using this program it is highly recommended you read the [`Use of AI during development`](#use-of-ai-during-development) paragraph
 
 ---

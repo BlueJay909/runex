@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Runex Documentation - CLI module
+title: CLI module
 ---
 
 # CLI Module (runex/cli.py) – Usage Examples
