@@ -19,14 +19,19 @@ github:
 theme_mode: dark
 cdn: "https://chirpy-img.netlify.app"
 
-sidebar:
-    - name: "Readme"
-      path: README.md
-    - name: "CLI Usage"
-      path: cli.md
-    - name: "Core module"
-      path: core.md
-    - name: "Ignore Logic Module"
-      path: ignore_logic.md
-    - name: "Wildmatch Logic"
-      path: wildmatch.md
+tabs:
+  - url: /README.html
+    title: Readme
+    icon: fas fa-home
+  - url: /cli.html
+    title: "CLI Documentation"
+    icon: fas fa-terminal
+  - url: /core.html
+    title: "Core Module"
+    icon: fas fa-code
+  - url: /ignore_logic.html
+    title: "Ignore Logic"
+    icon: fas fa-ban
+  - url: /wildmatch.html
+    title: "Wildmatch"
+    icon: fas fa-sitemap
