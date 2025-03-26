@@ -1,8 +1,9 @@
 # Runex
 > A context generation tool to bring vibe coding in your life... or do even more.
 
-`pip install runex`
-
+```bash
+pip install runex
+```
 ---
 
 ## Introduction
