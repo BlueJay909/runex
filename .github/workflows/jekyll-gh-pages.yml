@@ -51,7 +51,7 @@ jobs:
       - name: Build site with Jekyll
         run: |
           cd docs
-          bundle exec jekyll build --destination ../_site
+          bundle exec jekyll build --source docs --destination ../_site
 
       - name: Inject Google Site Verification Meta Tag
         run: |
