@@ -62,7 +62,7 @@ jobs:
         run: |
           pwd
           ls
-          ls ../_site
+          ls _site
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
