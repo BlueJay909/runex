@@ -170,7 +170,7 @@ Well...
 
 The _og_ scope of _the program_ was to cater the need for an easy and quick way ([see rfc1925 point 7a](https://www.rfc-editor.org/rfc/rfc1925.txt)) of providing "context" to a `large language model` service, without _painstakingly_ crtl-c an ctrl-v(ing) source code out of the IDE into the browser, all while t(c)rying to explain to the llm where a file should be read from and what it should actually do. (you still have to paste it back to the IDE so at least it's almost half of _the work_ done)
 
-If you want that, _we_ (me and gpt) have a [`runex visual studio code extension`](#) available.
+If you want that, _we_ (me and gpt) will have a [`runex visual studio code extension`](#) available. (COMING-SOON)
 
 ---
 
