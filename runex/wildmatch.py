@@ -60,6 +60,10 @@ def posix_upper(ch):
 # ----------------------------------------
 # Mapping for POSIX bracket expressions.
 # For classes we handle with custom functions in Unicode mode, we set the Unicode expansion to None.
+# The Unicode aware regular expression character classes that map to the 12 POSIX standard bracket expressions are taken from:
+# https://www.regular-expressions.info/posixbrackets.html
+# In python the \p operator is not supported so for those classes that don't have a direct regex translation
+# we can use there are custom functions defined 
 POSIX_MAPPING = {
     'alnum': ('a-zA-Z0-9', r'\w'),
     'alpha': ('a-zA-Z', None),  # Use posix_alpha in Unicode mode.
