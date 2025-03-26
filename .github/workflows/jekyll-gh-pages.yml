@@ -8,7 +8,7 @@ on:
       - 'README.md'
       - 'docs/**'
     branches: ["main"]
-  # Allows you to run this workflow manually from the Actions tab
+# Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
@@ -18,7 +18,7 @@ permissions:
   id-token: write
 
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.  
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.    
 concurrency:
   group: "pages"
   cancel-in-progress: false
@@ -28,31 +28,32 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
+
       # Setup Jekyll and Bundler directly without using predefined actions
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.4.2'  # Adjust to your required Ruby version
+          ruby-version: '3.4.2'
 
-      - name: Install Jekyll and Bundler
-        run: gem install jekyll bundler
+      - name: Install Jekyll
+        run: gem install jekyll
 
       - name: Build site with Jekyll
-        run: jekyll build --destination _site
+        run: jekyll build --source docs --destination docs/_site
 
       - name: Inject Google Site Verification Meta Tag
         run: |
           META_TAG='<meta name="google-site-verification" content="JHllWTJvLmNSlis60cxpV1yj0JGRR5XcSqTLJE_A1ww" />'
-          find ./_site -name "*.html" -exec sudo sed -i "s|</head>|$META_TAG\n</head>|g" {} +
+          find ./docs/_site -name "*.html" -exec sudo sed -i "s|</head>|$META_TAG\n</head>|g" {} +
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: _site
+          path: docs/_site
 
-  # Deployment job        
+  # Deployment job
   deploy:
     environment:
       name: github-pages
