@@ -1,3 +1,8 @@
+---
+layout: default
+title: Runex - A python dream.
+---
+
 # Runex
 > A context generation tool to bring vibe coding in your life... or do even more.
 
