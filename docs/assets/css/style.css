@@ -1,26 +1,21 @@
-/* Basic reset */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  /* Dark mode background and text */
-  body {
+/* Global Styles */
+body {
     background-color: #121212;
     color: #e0e0e0;
     font-family: 'Courier New', Courier, monospace;
-    line-height: 1.6;
+    line-height: 1.8;
+    margin: 0;
+    padding: 0;
   }
   
-  /* Container wrapper */
+  /* Wrapper */
   .wrapper {
     max-width: 960px;
     margin: 0 auto;
     padding: 1rem;
   }
   
-  /* Header styles */
+  /* Header */
   .site-header {
     text-align: center;
     padding: 1rem 0;
@@ -34,25 +29,12 @@
     color: #aaa;
   }
   
-  /* Main content area */
-  .site-content {
-    padding: 2rem 0;
+  /* Main content paragraphs: increased spacing */
+  .site-content p {
+    margin-bottom: 1.5rem;
   }
   
-  /* Code block styling (using a dark, terminal style) */
-  pre, code {
-    font-family: 'Courier New', Courier, monospace;
-  }
-  
-  /* Inline code */
-  code {
-    background-color: #1e1e1e;
-    padding: 0.2em 0.4em;
-    border-radius: 3px;
-    color: #dcdcdc;
-  }
-  
-  /* Block code */
+  /* Code Blocks */
   pre {
     background-color: #1e1e1e;
     color: #dcdcdc;
@@ -60,86 +42,100 @@
     overflow-x: auto;
     border-radius: 5px;
     margin-bottom: 1rem;
-    font-size: 0.9rem;
+    position: relative;
   }
   
-  /* Syntax highlighting colors */
-  .token.comment,
-  .token.prolog,
-  .token.doctype,
-  .token.cdata {
-    color: #7c7c7c;
+  /* Copy Button for Code Blocks */
+  .copy-code {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: #333;
+    color: #fff;
+    border: none;
+    padding: 0.3rem 0.5rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+    border-radius: 3px;
   }
-  .token.punctuation {
+  
+  /* React Navigation Styles */
+  .react-nav {
+    background-color: #222;
+    width: 100%;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  .nav-container {
+    max-width: 960px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 0.5rem 1rem;
+  }
+  .nav-brand {
+    flex: 1;
+    display: flex;
+    align-items: center;
+  }
+  .nav-brand a {
+    color: #61dafb;
+    font-size: 1.5rem;
+    text-decoration: none;
+  }
+  .nav-toggle {
+    background: none;
+    border: none;
+    color: #61dafb;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: none;
+  }
+  
+  /* Navigation Menu - Desktop */
+  .nav-menu {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+  }
+  .nav-menu li {
+    margin-left: 1rem;
+  }
+  .nav-menu a {
     color: #e0e0e0;
-  }
-  .token.property,
-  .token.tag,
-  .token.boolean,
-  .token.number,
-  .token.constant,
-  .token.symbol {
-    color: #f08d49;
-  }
-  .token.selector,
-  .token.attr-name,
-  .token.string,
-  .token.char,
-  .token.builtin,
-  .token.inserted {
-    color: #a8ff60;
-  }
-  .token.operator,
-  .token.entity,
-  .token.url,
-  .language-css .token.string,
-  .style .token.string {
-    color: #d4d4d4;
-  }
-  .token.atrule,
-  .token.attr-value,
-  .token.keyword {
-    color: #c792ea;
-  }
-  .token.function,
-  .token.deleted {
-    color: #ff5370;
+    text-decoration: none;
+    font-size: 1rem;
   }
   
-  /* Footer styling */
+  /* Mobile Navigation Styles */
+  @media (max-width: 600px) {
+    .nav-toggle {
+      display: block;
+    }
+    .nav-menu {
+      flex-basis: 100%;
+      flex-direction: column;
+      display: none;
+      width: 100%;
+      margin-top: 0.5rem;
+    }
+    .nav-menu.open {
+      display: flex;
+    }
+    .nav-menu li {
+      margin: 0.5rem 0;
+    }
+  }
+  
+  /* Footer */
   .site-footer {
     text-align: center;
     padding: 1rem 0;
     border-top: 1px solid #333;
     font-size: 0.9rem;
     color: #888;
-  }
-  
-  /* React Navigation Bar */
-.react-nav {
-    background-color: #222;
-    padding: 0.5rem 1rem;
-  }
-  
-  .react-nav ul {
-    list-style: none;
-    display: flex;
-    justify-content: center;
-    margin: 0;
-    padding: 0;
-  }
-  
-  .react-nav li {
-    margin: 0 1rem;
-  }
-  
-  .react-nav a {
-    color: #61dafb;
-    text-decoration: none;
-    font-weight: bold;
-  }
-  
-  .react-nav a:hover {
-    text-decoration: underline;
   }
   

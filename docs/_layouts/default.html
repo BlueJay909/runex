@@ -5,13 +5,12 @@
     <!-- Generate a global variable with navigation items -->
     <script>
       window.navItems = [
-        {% for page in site.pages %}
-          {% if page.title and page.nav != false %}
-            {
-              "title": "{{ page.title | escape }}",
-              "url": "{{ page.url | relative_url }}"
-            }{% unless forloop.last %},{% endunless %}
-          {% endif %}
+        {% assign nav_pages = site.pages | where_exp:"page", "page.title and page.nav != false" %}
+        {% for page in nav_pages %}
+          {
+            "title": "{{ page.title | escape }}",
+            "url": "{{ page.url | relative_url }}"
+          }{% if forloop.last == false %},{% endif %}
         {% endfor %}
       ];
     </script>
@@ -34,26 +33,58 @@
       </footer>
     </div>
     
-    <!-- React Component Script -->
+    <!-- React Navigation Component -->
     <script type="text/babel">
-      // A simple reactive navigation component using the dynamically-generated navItems
       function NavBar() {
+        const [isOpen, setIsOpen] = React.useState(false);
+        const toggleMenu = () => setIsOpen(!isOpen);
         const navItems = window.navItems || [];
         return (
           <nav className="react-nav">
-            <ul>
-              {navItems.map((item, index) => (
-                <li key={index}>
-                  <a href={item.url}>{item.title}</a>
-                </li>
-              ))}
-            </ul>
+            <div className="nav-container">
+              <div className="nav-brand">
+                <a href="{{ '/' | relative_url }}">{{ site.title }}</a>
+                <button className="nav-toggle" onClick={toggleMenu}>
+                  &#9776;
+                </button>
+              </div>
+              <ul className={`nav-menu ${isOpen ? 'open' : ''}`}>
+                {navItems.map((item, index) => (
+                  <li key={index}>
+                    <a href={item.url} onClick={() => setIsOpen(false)}>
+                      {item.title}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </nav>
         );
       }
   
-      // Render the NavBar into the placeholder element
       ReactDOM.render(<NavBar />, document.getElementById('react-nav'));
+    </script>
+    
+    <!-- Code Copy Button Script -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('pre').forEach(function(pre) {
+          const button = document.createElement('button');
+          button.className = 'copy-code';
+          button.textContent = 'Copy';
+          button.addEventListener('click', function() {
+            const code = pre.querySelector('code');
+            if (!code) return;
+            const text = code.innerText;
+            navigator.clipboard.writeText(text).then(function() {
+              button.textContent = 'Copied!';
+              setTimeout(() => button.textContent = 'Copy', 2000);
+            });
+          });
+          pre.style.position = 'relative';
+          pre.appendChild(button);
+        });
+      });
     </script>
   </body>
 </html>
