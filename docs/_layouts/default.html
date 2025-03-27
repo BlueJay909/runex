@@ -4,16 +4,17 @@
     {% include head.html %}
     <!-- Generate a global variable with navigation items -->
     <script>
-      window.navItems = [
-        {% assign nav_pages = site.pages | where_exp:"page", "page.title and page.nav != false" %}
-        {% for page in nav_pages %}
-          {
-            "title": "{{ page.title | escape }}",
-            "url": "{{ page.url | relative_url }}"
-          }{% if forloop.last == false %},{% endif %}
-        {% endfor %}
-      ];
-    </script>
+        window.navItems = [
+          {% assign pages_with_title = site.pages | where:"title" %}
+          {% assign nav_pages = pages_with_title | where_exp:"page", "page.nav != false" %}
+          {% for page in nav_pages %}
+            {
+              "title": "{{ page.title | escape }}",
+              "url": "{{ page.url | relative_url }}"
+            }{% if forloop.last == false %},{% endif %}
+          {% endfor %}
+        ];
+        </script>
   </head>
   <body>
     <!-- Placeholder for the dynamic React navigation bar -->
