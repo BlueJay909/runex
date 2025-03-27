@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Ignore Logic Module
+nav: true
 ---
 
 # Execution Flow of `should_ignore`

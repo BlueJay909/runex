@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CLI module
+nav: true
 ---
 
 # CLI Module (runex/cli.py) – Usage Examples

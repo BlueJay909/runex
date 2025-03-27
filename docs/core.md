@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Core Module
+nav: true
 ---
 
 # Core Module for Runex – Technical Overview

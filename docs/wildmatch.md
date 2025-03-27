@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Wildmatch Module
+nav: true
 ---
 
 # Wildmatch Matching and Flag Behavior in Runex

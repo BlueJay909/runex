@@ -51,9 +51,10 @@ jobs:
           ---
           layout: default
           title: Readme
+          nav: true
           ---
           EOF
-          
+
           # Append the contents of the repository README (which is clean) to the temporary file
           cat README.md >> docs/README_temp.md
 

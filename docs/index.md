@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Home
+nav: true
 ---
 
 # Welcome to Runex Documentation
