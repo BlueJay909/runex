@@ -1,8 +1,3 @@
----
-layout: default
-title: Readme
----
-
 # Runex
 > A context generation tool to bring vibe coding in your life... or do even more.
 
