@@ -1,0 +1,117 @@
+/* Basic reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  /* Dark mode background and text */
+  body {
+    background-color: #121212;
+    color: #e0e0e0;
+    font-family: 'Courier New', Courier, monospace;
+    line-height: 1.6;
+  }
+  
+  /* Container wrapper */
+  .wrapper {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 1rem;
+  }
+  
+  /* Header styles */
+  .site-header {
+    text-align: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid #333;
+  }
+  .site-title a {
+    color: #61dafb;
+    text-decoration: none;
+  }
+  .site-description {
+    color: #aaa;
+  }
+  
+  /* Main content area */
+  .site-content {
+    padding: 2rem 0;
+  }
+  
+  /* Code block styling (using a dark, terminal style) */
+  pre, code {
+    font-family: 'Courier New', Courier, monospace;
+  }
+  
+  /* Inline code */
+  code {
+    background-color: #1e1e1e;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    color: #dcdcdc;
+  }
+  
+  /* Block code */
+  pre {
+    background-color: #1e1e1e;
+    color: #dcdcdc;
+    padding: 1rem;
+    overflow-x: auto;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+  }
+  
+  /* Syntax highlighting colors */
+  .token.comment,
+  .token.prolog,
+  .token.doctype,
+  .token.cdata {
+    color: #7c7c7c;
+  }
+  .token.punctuation {
+    color: #e0e0e0;
+  }
+  .token.property,
+  .token.tag,
+  .token.boolean,
+  .token.number,
+  .token.constant,
+  .token.symbol {
+    color: #f08d49;
+  }
+  .token.selector,
+  .token.attr-name,
+  .token.string,
+  .token.char,
+  .token.builtin,
+  .token.inserted {
+    color: #a8ff60;
+  }
+  .token.operator,
+  .token.entity,
+  .token.url,
+  .language-css .token.string,
+  .style .token.string {
+    color: #d4d4d4;
+  }
+  .token.atrule,
+  .token.attr-value,
+  .token.keyword {
+    color: #c792ea;
+  }
+  .token.function,
+  .token.deleted {
+    color: #ff5370;
+  }
+  
+  /* Footer styling */
+  .site-footer {
+    text-align: center;
+    padding: 1rem 0;
+    border-top: 1px solid #333;
+    font-size: 0.9rem;
+    color: #888;
+  }
+  

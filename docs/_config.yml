@@ -2,4 +2,5 @@ title: Runex
 description: Documentation for Runex - a tool to generate a project prompt following Git's .gitignore rules.
 baseurl: "/runex"
 url: "https://bluejay909.github.io"
-theme: minima
+markdown: kramdown
+highlighter: rouge
