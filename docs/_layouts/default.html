@@ -2,8 +2,23 @@
 <html lang="en">
   <head>
     {% include head.html %}
+    <!-- Generate a global variable with navigation items -->
+    <script>
+      window.navItems = [
+        {% for page in site.pages %}
+          {% if page.title and page.nav != false %}
+            {
+              "title": "{{ page.title | escape }}",
+              "url": "{{ page.url | relative_url }}"
+            }{% unless forloop.last %},{% endunless %}
+          {% endif %}
+        {% endfor %}
+      ];
+    </script>
   </head>
   <body>
+    <!-- Placeholder for the dynamic React navigation bar -->
+    <div id="react-nav"></div>
     <div class="wrapper">
       <header class="site-header">
         <h1 class="site-title">
@@ -11,14 +26,34 @@
         </h1>
         <p class="site-description">{{ site.description }}</p>
       </header>
-
       <main class="site-content">
         {{ content }}
       </main>
-
       <footer class="site-footer">
         {% include footer.html %}
       </footer>
     </div>
+    
+    <!-- React Component Script -->
+    <script type="text/babel">
+      // A simple reactive navigation component using the dynamically-generated navItems
+      function NavBar() {
+        const navItems = window.navItems || [];
+        return (
+          <nav className="react-nav">
+            <ul>
+              {navItems.map((item, index) => (
+                <li key={index}>
+                  <a href={item.url}>{item.title}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        );
+      }
+  
+      // Render the NavBar into the placeholder element
+      ReactDOM.render(<NavBar />, document.getElementById('react-nav'));
+    </script>
   </body>
 </html>

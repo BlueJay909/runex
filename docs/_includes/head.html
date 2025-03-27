@@ -3,3 +3,9 @@
 <title>{{ page.title | escape }} - {{ site.title | escape }}</title>
 <meta name="description" content="{{ page.description | default: site.description | escape }}">
 <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+
+<!-- Load React and ReactDOM from a CDN -->
+<script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+<!-- Optional: Babel for inline JSX support -->
+<script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>

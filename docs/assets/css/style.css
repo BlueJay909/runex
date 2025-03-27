@@ -115,3 +115,31 @@
     color: #888;
   }
   
+  /* React Navigation Bar */
+.react-nav {
+    background-color: #222;
+    padding: 0.5rem 1rem;
+  }
+  
+  .react-nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .react-nav li {
+    margin: 0 1rem;
+  }
+  
+  .react-nav a {
+    color: #61dafb;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .react-nav a:hover {
+    text-decoration: underline;
+  }
+  
